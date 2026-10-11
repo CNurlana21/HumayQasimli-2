@@ -1,0 +1,50 @@
+@model HumayQasimli.Models.ViewModels.NotificationsPageViewModel
+@{
+    ViewData["Title"] = "Bildirişlər";
+}
+<h1 class="mb-4">Bildirişlər</h1>
+
+<h5 class="mb-3">Oxunmamış (@Model.Unread.Count)</h5>
+<table class="table table-bordered bg-white align-middle mb-5">
+    <tbody>
+        @foreach (var n in Model.Unread)
+        {
+            <tr>
+                <td class="fw-bold">
+                    @n.Message
+                    <div class="text-muted small fw-normal">@n.CreatedAt.ToString("dd.MM.yyyy HH:mm")</div>
+                </td>
+                <td style="width:220px">
+                    <form asp-action="MarkNotificationRead" asp-route-id="@n.Id" method="post" class="d-inline"><button type="submit" class="btn btn-sm btn-outline-primary">Oxu</button></form>
+                    <form asp-action="DeleteNotification" asp-route-id="@n.Id" method="post" class="d-inline" onsubmit="return confirm('Silinsin?')"><button type="submit" class="btn btn-sm btn-outline-danger">Sil</button></form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (!Model.Unread.Any())
+{
+    <p class="text-muted">Oxunmamış bildiriş yoxdur.</p>
+}
+
+<h5 class="mb-3">Oxunmuş</h5>
+<table class="table table-bordered bg-white align-middle">
+    <tbody>
+        @foreach (var n in Model.Read)
+        {
+            <tr>
+                <td>
+                    @n.Message
+                    <div class="text-muted small">@n.CreatedAt.ToString("dd.MM.yyyy HH:mm")</div>
+                </td>
+                <td style="width:120px">
+                    <form asp-action="DeleteNotification" asp-route-id="@n.Id" method="post" onsubmit="return confirm('Silinsin?')"><button type="submit" class="btn btn-sm btn-outline-danger">Sil</button></form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (!Model.Read.Any())
+{
+    <p class="text-muted">Oxunmuş bildiriş yoxdur.</p>
+}

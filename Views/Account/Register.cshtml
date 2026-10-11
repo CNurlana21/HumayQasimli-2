@@ -1,0 +1,72 @@
+@model HumayQasimli.Models.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Qeydiyyat";
+}
+<section class="section section--mist smart-section">
+    <div class="container">
+        <div class="col-md-5 mx-auto tile reveal" style="padding:2.5rem">
+            <h1 class="mb-4 text-center" style="font-size:1.8rem">Qeydiyyat</h1>
+            <form asp-action="Register" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label"></label>
+                    <input asp-for="FullName" class="form-control" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <div class="password-field">
+                        <input asp-for="Password" class="form-control" />
+                        <button type="button" class="password-toggle" aria-label="Şifrəni göstər">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="ConfirmPassword" class="form-label"></label>
+                    <div class="password-field">
+                        <input asp-for="ConfirmPassword" class="form-control" />
+                        <button type="button" class="password-toggle" aria-label="Şifrəni göstər">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-brand w-100">Qeydiyyatdan keç</button>
+            </form>
+            <hr class="hairline-top" style="border:none;margin:1.5rem 0" />
+            <form asp-action="GoogleLogin" method="post">
+                <button type="submit" class="btn btn-outline-brand w-100"><i class="bi bi-google"></i> Google ilə qeydiyyat</button>
+            </form>
+            <p class="text-center mt-3 mb-0">Artıq hesabınız var? <a class="link-reveal" asp-action="Login">Daxil olun</a></p>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('.password-toggle').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var wrapper = btn.closest('.password-field');
+                var input = wrapper ? wrapper.querySelector('input') : null;
+                if (!input) return;
+
+                var isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+
+                var icon = btn.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('bi-eye', !isHidden);
+                    icon.classList.toggle('bi-eye-slash', isHidden);
+                }
+                btn.setAttribute('aria-label', isHidden ? 'Şifrəni gizlət' : 'Şifrəni göstər');
+            });
+        });
+    </script>
+}

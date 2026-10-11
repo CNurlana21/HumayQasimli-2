@@ -1,0 +1,259 @@
+@model HumayQasimli.Models.Entities.Vlog
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<HumayQasimli.Models.Entities.ApplicationUser> SignInManager
+@{
+    ViewData["Title"] = Model.Title;
+    bool isLiked = ViewBag.IsLiked;
+    int likeCount = ViewBag.LikeCount;
+
+    var url = Model.VideoUrl ?? string.Empty;
+    string platformName = "Xarici keçid";
+    string platformIcon = "bi-box-arrow-up-right";
+    if (url.Contains("instagram.com", StringComparison.OrdinalIgnoreCase)) { platformName = "Instagram"; platformIcon = "bi-instagram"; }
+    else if (url.Contains("linkedin.com", StringComparison.OrdinalIgnoreCase)) { platformName = "LinkedIn"; platformIcon = "bi-linkedin"; }
+    else if (url.Contains("tiktok.com", StringComparison.OrdinalIgnoreCase)) { platformName = "TikTok"; platformIcon = "bi-tiktok"; }
+    else if (url.Contains("facebook.com", StringComparison.OrdinalIgnoreCase)) { platformName = "Facebook"; platformIcon = "bi-facebook"; }
+    else if (url.Contains("youtube.com", StringComparison.OrdinalIgnoreCase) || url.Contains("youtu.be", StringComparison.OrdinalIgnoreCase)) { platformName = "YouTube"; platformIcon = "bi-youtube"; }
+    else if (url.Contains("vimeo.com", StringComparison.OrdinalIgnoreCase)) { platformName = "Vimeo"; platformIcon = "bi-vimeo"; }
+
+    var meName = User.Identity?.Name;
+    var meInitial = string.IsNullOrWhiteSpace(meName) ? "S" : meName.Trim().Substring(0, 1).ToUpperInvariant();
+}
+
+@functions {
+    static string Initial(string? n) => string.IsNullOrWhiteSpace(n) ? "İ" : n.Trim().Substring(0, 1).ToUpperInvariant();
+    // 190..300 aralığı: mavi -> lila -> bənövşəyi tonlar (sabit, yenidən başladıqda dəyişmir)
+    static int Hue(string? n) => 190 + ((n ?? string.Empty).Aggregate(7, (a, ch) => (a * 31 + ch) & 0x7fffffff) % 110);
+    static string Iso(DateTime d) => d.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'");
+}
+
+<section class="section section--raised smart-section">
+    <div class="container" style="max-width:860px">
+        <a asp-action="Index" class="link-reveal mb-4 d-inline-block">&larr; Bütün vloglar</a>
+
+        @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+        {
+            <img src="@Model.CoverImageUrl" class="img-fluid mb-3" style="max-height:440px;object-fit:cover;width:100%;border-radius:var(--radius-lg)" alt="@Model.Title" />
+        }
+
+        <div class="d-flex flex-wrap gap-2 mb-2">
+            @if (Model.Category != null)
+            {
+                <span class="smart-pill"><i class="bi bi-tag-fill"></i> @Model.Category.Name</span>
+            }
+            <span class="smart-pill"><i class="bi bi-calendar3"></i> @Model.PublishDate.ToString("dd.MM.yyyy")</span>
+            <span class="smart-pill"><i class="bi bi-eye-fill"></i> @Model.ViewCount baxış</span>
+        </div>
+        <h1>@Model.Title</h1>
+
+        @if (Model.VideoSourceType == HumayQasimli.Models.Entities.VideoSourceType.UploadedVideo)
+        {
+            <div class="mb-4" style="border-radius:var(--radius-lg);overflow:hidden;background:#000">
+                <video src="@Model.VideoUrl" controls style="width:100%;max-height:520px;display:block"></video>
+            </div>
+        }
+        else
+        {
+            <a href="@Model.VideoUrl" target="_blank" rel="noopener"
+               class="tile d-flex flex-row align-items-center gap-3 p-4 mb-4" style="text-decoration:none">
+                <i class="bi @platformIcon" style="font-size:2.2rem;color:var(--gold-deep)"></i>
+                <div>
+                    <div class="tile__title" style="font-size:1.05rem">@platformName-da izləyin</div>
+                    <div class="tile__meta">Video xarici keçiddə açılacaq (yeni pəncərə)</div>
+                </div>
+                <i class="bi bi-box-arrow-up-right ms-auto" style="color:var(--text-muted)"></i>
+            </a>
+        }
+
+        <div class="readmore mb-3" data-readmore>
+            <div class="readmore__text read-text" style="--rm-lines:12">@Model.Description</div>
+            <button type="button" class="readmore__btn" aria-expanded="false"><span>Ətraflı oxu</span> <i class="bi bi-chevron-down"></i></button>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 my-4 vlog-actions" id="vlog-actions" data-vlog-id="@Model.Id">
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <button id="likeBtn" class="btn @(isLiked ? "btn-brand" : "btn-outline-brand")">
+                    <i class="bi bi-heart-fill"></i> <span id="likeCount">@likeCount</span>
+                </button>
+            }
+            else
+            {
+                <span class="tile__meta"><i class="bi bi-heart"></i> @likeCount bəyənmə &mdash; bəyənmək üçün <a class="link-reveal" asp-controller="Account" asp-action="Login">daxil olun</a></span>
+            }
+            <button id="shareBtn" class="btn btn-outline-brand"><i class="bi bi-share"></i> Paylaş</button>
+        </div>
+
+        <div class="discussion">
+            <h3 class="discussion__title"><i class="bi bi-chat-heart"></i> Müzakirə <span class="discussion__count" id="commentCount">@Model.Comments.Count</span></h3>
+
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <form id="commentForm" class="smart-input">
+                    <span class="avatar avatar--sm" style="--h:@(Hue(meName))">@meInitial</span>
+                    <input type="text" id="commentContent" placeholder="Şərh yazın..." maxlength="2000" autocomplete="off" />
+                    <span class="smart-input__count" id="commentCounter"></span>
+                    <button type="submit" class="smart-input__send"><span>Göndər</span> <i class="bi bi-send-fill"></i></button>
+                </form>
+            }
+            else
+            {
+                <div class="discussion__login"><i class="bi bi-lock"></i> Şərh yazmaq üçün <a class="link-reveal" asp-controller="Account" asp-action="Login">daxil olun</a>.</div>
+            }
+
+            <div id="commentsList">
+                @foreach (var c in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                {
+                    var author = c.User?.FullName ?? "İstifadəçi";
+                    <div class="comment-card">
+                        <span class="avatar" style="--h:@(Hue(author))">
+                            @if (!string.IsNullOrEmpty(c.User?.ProfileImageUrl))
+                            {
+                                <img src="@(c.User?.ProfileImageUrl)" alt="@author" />
+                            }
+                            else
+                            {
+                                @Initial(author)
+                            }
+                        </span>
+                        <div class="comment-card__main">
+                            <div class="comment-card__top">
+                                <span class="comment-card__name">@author</span>
+                                <time class="comment-card__time" datetime="@Iso(c.CreatedAt)"><i class="bi bi-calendar3"></i> <span class="t-label">@c.CreatedAt.ToString("dd.MM.yyyy")</span></time>
+                            </div>
+                            <p class="comment-card__text">@c.Content</p>
+                            @if (!string.IsNullOrEmpty(c.AdminReply))
+                            {
+                                <div class="comment-admin"><span class="comment-admin__badge">Admin</span>@c.AdminReply</div>
+                            }
+                            <div class="comment-card__actions">
+                                <button type="button" class="comment-action comment-like" data-comment-id="@c.Id" aria-pressed="false"><i class="bi bi-heart"></i> <span class="like-count">0</span></button>
+                                <button type="button" class="comment-action comment-reply" data-author="@author"><i class="bi bi-reply"></i> Cavab ver</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (!Model.Comments.Any())
+                {
+                    <div class="discussion__empty" id="noComments"><i class="bi bi-chat-dots"></i>İlk şərhi siz yazın.</div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        const vlogId = document.getElementById('vlog-actions')?.dataset.vlogId;
+
+        function getAfToken() {
+            const el = document.querySelector('input[name="__RequestVerificationToken"]');
+            return el ? el.value : '';
+        }
+
+        async function postForm(url) {
+            const formData = new FormData();
+            formData.append('__RequestVerificationToken', getAfToken());
+            const res = await fetch(url, { method: 'POST', body: formData });
+            return res.json();
+        }
+
+        document.getElementById('likeBtn')?.addEventListener('click', async () => {
+            const data = await postForm(`/Vlog/ToggleLike?id=${vlogId}`);
+            if (data.success) {
+                document.getElementById('likeCount').innerText = data.count;
+                document.getElementById('likeBtn').classList.toggle('btn-brand', data.liked);
+                document.getElementById('likeBtn').classList.toggle('btn-outline-brand', !data.liked);
+            }
+        });
+
+        document.getElementById('shareBtn')?.addEventListener('click', async () => {
+            const res = await fetch(`/Vlog/Share?id=${vlogId}`);
+            const data = await res.json();
+            if (navigator.share) {
+                navigator.share({ title: document.title, url: data.url }).catch(() => {});
+            } else {
+                await navigator.clipboard.writeText(data.url);
+                alert('Link kopyalandı: ' + data.url);
+            }
+        });
+
+        function hueFor(name) {
+            let a = 7;
+            for (const ch of (name || '')) { a = (Math.imul(a, 31) + ch.charCodeAt(0)) & 0x7fffffff; }
+            return 190 + (a % 110);
+        }
+
+        function buildCommentCard(data) {
+            const card = document.createElement('div');
+            card.className = 'comment-card is-new';
+
+            const avatar = document.createElement('span');
+            avatar.className = 'avatar';
+            avatar.style.setProperty('--h', hueFor(data.userName));
+            avatar.textContent = (data.userName || 'İ').trim().charAt(0).toUpperCase();
+
+            const main = document.createElement('div');
+            main.className = 'comment-card__main';
+
+            const top = document.createElement('div');
+            top.className = 'comment-card__top';
+            const name = document.createElement('span');
+            name.className = 'comment-card__name';
+            name.textContent = data.userName;
+            const time = document.createElement('time');
+            const now = new Date();
+            const dateText = String(now.getDate()).padStart(2, '0') + '.' +
+                             String(now.getMonth() + 1).padStart(2, '0') + '.' + now.getFullYear();
+            time.className = 'comment-card__time';
+            time.setAttribute('datetime', now.toISOString());
+            time.innerHTML = '<i class="bi bi-calendar3"></i> <span class="t-label">' + dateText + '</span>';
+            top.append(name, time);
+
+            const text = document.createElement('p');
+            text.className = 'comment-card__text';
+            text.textContent = data.content;
+
+            const actions = document.createElement('div');
+            actions.className = 'comment-card__actions';
+            actions.innerHTML = '<button type="button" class="comment-action comment-like" aria-pressed="false"><i class="bi bi-heart"></i> <span class="like-count">0</span></button>';
+            const reply = document.createElement('button');
+            reply.type = 'button';
+            reply.className = 'comment-action comment-reply';
+            reply.setAttribute('data-author', data.userName);
+            reply.innerHTML = '<i class="bi bi-reply"></i> Cavab ver';
+            actions.appendChild(reply);
+
+            main.append(top, text, actions);
+            card.append(avatar, main);
+            return card;
+        }
+
+        document.getElementById('commentForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const content = document.getElementById('commentContent').value.trim();
+            if (!content) return;
+
+            const formData = new FormData();
+            formData.append('__RequestVerificationToken', getAfToken());
+            formData.append('content', content);
+
+            const res = await fetch(`/Vlog/AddComment?id=${vlogId}`, { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if (data.success) {
+                const list = document.getElementById('commentsList');
+                document.getElementById('noComments')?.remove();
+                list.prepend(buildCommentCard(data));
+                const input = document.getElementById('commentContent');
+                input.value = '';
+                input.dispatchEvent(new Event('input'));
+                document.getElementById('commentCount').innerText = parseInt(document.getElementById('commentCount').innerText) + 1;
+            } else {
+                alert(data.error || 'Xeta bas verdi.');
+            }
+        });
+    </script>
+}
+
+@Html.AntiForgeryToken()

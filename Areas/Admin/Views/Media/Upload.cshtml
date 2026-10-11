@@ -1,0 +1,11 @@
+@{ ViewData["Title"] = "Fayl yüklə"; }
+<h1 class="mb-4">Fayl yüklə</h1>
+<form asp-action="Upload" method="post" enctype="multipart/form-data" class="col-md-6">
+    <div class="text-danger">@Html.ValidationSummary()</div>
+    <div class="mb-3">
+        <label class="form-label">Fayl</label>
+        <input type="file" name="file" class="form-control" accept=".jpg,.jpeg,.png,.webp,.pdf" required />
+    </div>
+    <button type="submit" class="btn btn-dark">Yüklə</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Ləğv et</a>
+</form>

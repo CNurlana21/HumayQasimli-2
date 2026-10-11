@@ -1,0 +1,94 @@
+@model List<HumayQasimli.Models.Entities.Blog>
+@{
+    ViewData["Title"] = "Blog";
+    var categories = ViewBag.Categories as List<HumayQasimli.Models.Entities.Category>;
+    int? selected = ViewBag.SelectedCategoryId;
+    int page = ViewBag.Page;
+    int totalPages = ViewBag.TotalPages;
+}
+
+<section class="section section--raised smart-section smart-section--alt">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="kicker">Yazılar</span>
+            <h1>Blog</h1>
+        </div>
+
+        <div class="smart-filter reveal">
+            <label class="smart-filter__search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="cardSearch" placeholder="Yazılarda axtar..." autocomplete="off" aria-label="Axtarış" />
+            </label>
+            <form method="get" class="smart-filter__form">
+                <select name="categoryId" class="form-select" onchange="this.form.submit()">
+                    <option value="">Bütün kateqoriyalar</option>
+                    @if (categories != null)
+                    {
+                        foreach (var c in categories)
+                        {
+                            <option value="@c.Id" selected="@(selected == c.Id)">@c.Name</option>
+                        }
+                    }
+                </select>
+            </form>
+            <span class="smart-filter__count" id="cardCount"></span>
+        </div>
+
+        <div class="row g-4">
+            @{ var idx = 0; }
+            @foreach (var b in Model)
+            {
+                <div class="col-12 col-sm-6 col-lg-4 reveal" data-card data-search="@($"{b.Title} {b.ShortDescription} {b.Category?.Name}")" style="transition-delay:@((idx % 3) * 90)ms">
+                    <article class="smart-card smart-card--article">
+                        <div class="smart-card__media @(string.IsNullOrEmpty(b.CoverImageUrl) ? "smart-card__media--empty" : "")">
+                            @if (!string.IsNullOrEmpty(b.CoverImageUrl))
+                            {
+                                <img src="@b.CoverImageUrl" alt="@b.Title" loading="lazy" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-journal-text"></i>
+                            }
+                            <div class="smart-card__glass"></div>
+                            @if (b.Category != null)
+                            {
+                                <span class="smart-badge smart-badge--cat"><i class="bi bi-tag-fill"></i> @b.Category.Name</span>
+                            }
+                            <span class="smart-badge smart-badge--date"><i class="bi bi-calendar3"></i> @b.PublishDate.ToString("dd.MM.yyyy")</span>
+                        </div>
+                        <div class="smart-card__body">
+                            <h3 class="smart-card__title">@b.Title</h3>
+                            <div class="readmore" data-readmore>
+                                <div class="readmore__text smart-card__text" style="--rm-lines:3">@b.ShortDescription</div>
+                                <button type="button" class="readmore__btn" aria-expanded="false"><span>Ətraflı oxu</span> <i class="bi bi-chevron-down"></i></button>
+                            </div>
+                            <a class="smart-card__more smart-card__link" asp-action="Details" asp-route-id="@b.Id">Bloqu oxu <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </article>
+                </div>
+                idx++;
+            }
+        </div>
+
+        <div class="smart-empty" id="cardEmpty"><i class="bi bi-search-heart"></i>Axtarışa uyğun nəticə tapılmadı.</div>
+
+        @if (!Model.Any())
+        {
+            <p class="text-muted mt-3">Blog yazısı tapılmadı.</p>
+        }
+
+        @if (totalPages > 1)
+        {
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == page ? "active" : "")">
+                            <a class="page-link" href="?page=@i&categoryId=@selected">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </div>
+</section>

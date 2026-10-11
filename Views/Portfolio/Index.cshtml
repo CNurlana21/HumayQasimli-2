@@ -1,0 +1,76 @@
+@model List<HumayQasimli.Models.Entities.PortfolioProject>
+@{
+    ViewData["Title"] = "Portfolio";
+    var categories = ViewBag.Categories as List<HumayQasimli.Models.Entities.Category>;
+    int? selected = ViewBag.SelectedCategoryId;
+}
+
+<section class="section section--raised smart-section">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="kicker">İş nümunələri</span>
+            <h1>Portfolio / Layihələr</h1>
+        </div>
+
+        <div class="smart-filter reveal">
+            <label class="smart-filter__search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="cardSearch" placeholder="Layihələrdə axtar..." autocomplete="off" aria-label="Axtarış" />
+            </label>
+            <span class="smart-filter__count" id="cardCount"></span>
+            <div class="smart-filter__chips">
+                <a asp-action="Index" class="smart-chip @(selected == null ? "is-active" : "")">Hamısı</a>
+                @if (categories != null)
+                {
+                    foreach (var c in categories)
+                    {
+                        <a asp-action="Index" asp-route-categoryId="@c.Id" class="smart-chip @(selected == c.Id ? "is-active" : "")">@c.Name</a>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @{ var idx = 0; }
+            @foreach (var p in Model)
+            {
+                <div class="col-12 col-sm-6 col-lg-4 reveal" data-card data-search="@($"{p.Title} {p.Description} {p.TechStack}")" style="transition-delay:@((idx % 3) * 90)ms">
+                    <article class="smart-card smart-card--article">
+                        <div class="smart-card__media @(string.IsNullOrEmpty(p.ImageUrl) ? "smart-card__media--empty" : "")">
+                            @if (!string.IsNullOrEmpty(p.ImageUrl))
+                            {
+                                <img src="@p.ImageUrl" alt="@p.Title" loading="lazy" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-briefcase"></i>
+                            }
+                            <div class="smart-card__glass"></div>
+                            @if (p.IsFeatured)
+                            {
+                                <span class="smart-badge smart-badge--cat"><i class="bi bi-stars"></i> Seçilmiş</span>
+                            }
+                            <span class="smart-badge smart-badge--date"><i class="bi bi-calendar3"></i> @p.CreatedAt.ToString("dd.MM.yyyy")</span>
+                        </div>
+                        <div class="smart-card__body">
+                            <h3 class="smart-card__title">@p.Title</h3>
+                            <div class="readmore" data-readmore>
+                                <div class="readmore__text smart-card__text" style="--rm-lines:3">@p.Description</div>
+                                <button type="button" class="readmore__btn" aria-expanded="false"><span>Ətraflı oxu</span> <i class="bi bi-chevron-down"></i></button>
+                            </div>
+                            <a class="smart-card__more smart-card__link" asp-action="Details" asp-route-id="@p.Id">Layihəyə bax <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </article>
+                </div>
+                idx++;
+            }
+        </div>
+
+        <div class="smart-empty" id="cardEmpty"><i class="bi bi-search-heart"></i>Axtarışa uyğun nəticə tapılmadı.</div>
+
+        @if (!Model.Any())
+        {
+            <p class="text-muted">Layihə tapılmadı.</p>
+        }
+    </div>
+</section>

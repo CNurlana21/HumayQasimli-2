@@ -1,0 +1,17 @@
+﻿@model HumayQasimli.Areas.Admin.Controllers.BlogFormViewModel
+@{
+    ViewData["Title"] = "Yeni Blog";
+}
+<h1 class="mb-4">Yeni Blog</h1>
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="col-md-8">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3"><label class="form-label">Başlıq</label><input asp-for="Title" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Qısa açıqlama</label><textarea asp-for="ShortDescription" class="form-control" rows="2"></textarea></div>
+    <div class="mb-3"><label class="form-label">Mətn</label><textarea asp-for="Content" class="form-control" rows="10"></textarea></div>
+    <div class="mb-3"><label class="form-label">Kateqoriya</label><select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select"></select></div>
+    <div class="mb-3"><label class="form-label">Cover şəkil</label><input asp-for="CoverImage" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" /></div>
+    <div class="mb-3"><label class="form-label">Tarix</label><input asp-for="PublishDate" type="date" class="form-control" /></div>
+    <div class="form-check mb-3"><input asp-for="IsPublished" class="form-check-input" /><label class="form-check-label">Publish et</label></div>
+    <button type="submit" class="btn btn-dark">Yadda saxla</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Ləğv et</a>
+</form>

@@ -1,0 +1,54 @@
+@model HumayQasimli.Areas.Admin.Controllers.VlogFormViewModel
+@{
+    ViewData["Title"] = "Yeni Vlog";
+}
+<h1 class="mb-4">Yeni Vlog</h1>
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="col-md-8">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3"><label class="form-label">Başlıq</label><input asp-for="Title" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Açıqlama</label><textarea asp-for="Description" class="form-control" rows="4"></textarea></div>
+
+    <div class="mb-3">
+        <label class="form-label">Video növü</label>
+        <select asp-for="VideoSourceType" asp-items="ViewBag.VideoTypes" class="form-select" id="videoTypeSelect"></select>
+        <div class="form-text">
+            <strong>Xarici keçid</strong> — Instagram, LinkedIn, TikTok, YouTube və s. linkini yapışdırın; ziyarətçi klikləyib həmin platformada izləyəcək.<br />
+            <strong>Video faylı yüklə</strong> — kompüterinizdən və ya telefon qalereyasından hazır video faylı seçin (MP4/MOV/WEBM); video birbaşa saytda oynayacaq.
+        </div>
+    </div>
+
+    <div class="mb-3" id="videoUrlGroup">
+        <label class="form-label">Video linki</label>
+        <input asp-for="VideoUrl" class="form-control" placeholder="https://www.instagram.com/reel/... və ya https://www.youtube.com/watch?v=..." />
+        <span asp-validation-for="VideoUrl" class="text-danger"></span>
+    </div>
+    <div class="mb-3" id="videoFileGroup" style="display:none">
+        <label class="form-label">Video faylı</label>
+        <input asp-for="VideoFile" type="file" class="form-control" accept=".mp4,.mov,.webm" />
+        <span asp-validation-for="VideoFile" class="text-danger"></span>
+        <div class="form-text">Maksimum ölçü: 150MB.</div>
+    </div>
+
+    <div class="mb-3"><label class="form-label">Kateqoriya</label><select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select"></select></div>
+    <div class="mb-3"><label class="form-label">Cover şəkil</label><input asp-for="CoverImage" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" /></div>
+    <div class="mb-3"><label class="form-label">Tarix</label><input asp-for="PublishDate" type="date" class="form-control" /></div>
+    <div class="form-check mb-2"><input asp-for="IsFeatured" class="form-check-input" /><label class="form-check-label">Featured</label></div>
+    <div class="form-check mb-3"><input asp-for="IsPublished" class="form-check-input" /><label class="form-check-label">Publish et</label></div>
+    <button type="submit" class="btn btn-dark">Yadda saxla</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Ləğv et</a>
+</form>
+
+@section Scripts {
+    <script>
+        var select = document.getElementById('videoTypeSelect');
+        var urlGroup = document.getElementById('videoUrlGroup');
+        var fileGroup = document.getElementById('videoFileGroup');
+        function updateVideoFields() {
+            var isUpload = select.value === 'UploadedVideo';
+            urlGroup.style.display = isUpload ? 'none' : '';
+            fileGroup.style.display = isUpload ? '' : 'none';
+        }
+        select?.addEventListener('change', updateVideoFields);
+        updateVideoFields();
+    </script>
+}

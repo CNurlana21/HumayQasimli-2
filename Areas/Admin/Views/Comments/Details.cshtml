@@ -1,0 +1,23 @@
+﻿@model Comment
+@{
+    ViewData["Title"] = "Şərh";
+}
+<h1 class="mb-4">Şərhə cavab</h1>
+<p><strong>İstifadəçi:</strong> @Model.User?.FullName (@Model.User?.Email)</p>
+<p><strong>Vlog:</strong> @Model.Vlog?.Title</p>
+<p><strong>Tarix:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+<div class="card mb-3"><div class="card-body">@Model.Content</div></div>
+
+@if (!string.IsNullOrEmpty(Model.AdminReply))
+{
+    <div class="alert alert-light border"><strong>Cavabınız:</strong> @Model.AdminReply <div class="text-muted small">@Model.RepliedAt?.ToString("dd.MM.yyyy HH:mm")</div></div>
+}
+
+<form asp-action="Reply" asp-route-id="@Model.Id" method="post" class="col-md-6">
+    <div class="mb-3">
+        <label class="form-label">Cavab yaz</label>
+        <textarea name="reply" class="form-control" rows="4">@Model.AdminReply</textarea>
+    </div>
+    <button type="submit" class="btn btn-dark">Cavabla</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Geri</a>
+</form>

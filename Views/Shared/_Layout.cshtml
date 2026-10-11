@@ -1,0 +1,159 @@
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using HumayQasimli.Models.Entities
+@using HumayQasimli.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext Db
+@{
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString();
+    var actionName = ViewContext.RouteData.Values["action"]?.ToString();
+    var isHome = controllerName == "Home" && actionName == "Index";
+
+    // Mobil menyuda göstərilən profil şəkli (hero ilə eyni şəkil)
+    var navProfile = await Db.SiteSettings.AsNoTracking().FirstOrDefaultAsync();
+    string? navProfileImg = navProfile?.ProfileImageUrl;
+
+    string? currentUserId = null;
+    int unreadCount = 0;
+    bool isAdmin = false;
+    if (SignInManager.IsSignedIn(User))
+    {
+        currentUserId = UserManager.GetUserId(User);
+        unreadCount = await Db.Notifications.CountAsync(n => n.UserId == currentUserId && !n.IsRead);
+        isAdmin = User.IsInRole("Admin");
+    }
+}
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Humay Qasımlı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,560;9..144,650&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/smart.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg site-nav @(isHome ? "is-transparent" : "")">
+            <div class="container site-nav__inner">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Humay Qasımlı</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Menyu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <div class="mobile-profile d-lg-none">
+                        <div class="mobile-profile__ring">
+                            @if (!string.IsNullOrEmpty(navProfileImg))
+                            {
+                                <img class="mobile-profile__img" src="@navProfileImg" alt="Humay Qasımlı" />
+                            }
+                            else
+                            {
+                                <div class="mobile-profile__fallback"><i class="bi bi-person"></i></div>
+                            }
+                        </div>
+                        <div>
+                            <span class="mobile-profile__name">Humay Qasımlı</span>
+                            <span class="mobile-profile__role">Mentor &amp; Koç</span>
+                        </div>
+                    </div>
+                    <ul class="navbar-nav site-nav__links mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link @(controllerName == "About" ? "active" : "")" asp-controller="About" asp-action="Index">Haqqımda</a></li>
+                        <li class="nav-item"><a class="nav-link @(controllerName == "MentorMeeting" ? "active" : "")" asp-controller="MentorMeeting" asp-action="Index">Mentorluq</a></li>
+                        
+                        <li class="nav-item"><a class="nav-link @(controllerName == "Training" ? "active" : "")" asp-controller="Training" asp-action="Index">Təlimlər</a></li>
+                        <li class="nav-item"><a class="nav-link @(controllerName == "Vlog" ? "active" : "")" asp-controller="Vlog" asp-action="Index">Vloq</a></li>
+                        <li class="nav-item"><a class="nav-link @(controllerName == "Blog" ? "active" : "")" asp-controller="Blog" asp-action="Index">Bloq</a></li>
+
+                        <li class="nav-item"><a class="nav-link @(controllerName == "Portfolio" ? "active" : "")" asp-controller="Portfolio" asp-action="Index">Portfolio</a></li>
+                    </ul>
+                    <ul class="navbar-nav site-nav__auth align-items-lg-center">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            if (isAdmin)
+                            {
+                                <li class="nav-item"><a class="nav-link" href="/Admin/Dashboard" target="_blank"><i class="bi bi-speedometer2"></i> Admin</a></li>
+                            }
+                            <li class="nav-item">
+                                <a class="nav-link position-relative" asp-controller="Notification" asp-action="Index" title="Bildirişlər">
+                                    <i class="bi bi-bell"></i>
+                                    @if (unreadCount > 0)
+                                    {
+                                        <span class="badge rounded-pill bg-danger position-absolute" style="top:-2px;right:-6px;font-size:.62rem;padding:.25em .45em">@(unreadCount > 99 ? "99+" : unreadCount.ToString())</span>
+                                    }
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    <button type="submit" class="nav-link" style="border:none;background:none">Çıxış</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Login">Giriş</a></li>
+                            <li class="nav-item ms-lg-2"><a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Register">Qeydiyyat</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center mb-0">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger text-center mb-0">@TempData["Error"]</div>
+    }
+
+    <main class="min-vh-100">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-md-5">
+                    <div class="brand mb-2">Humay Qasımlı</div>
+                    <p class="mb-0" style="max-width:38ch">Mentorluq, koçluq və şəxsi inkişaf üzrə iş və insanlar arasında körpü qururam.</p>
+                </div>
+                <div class="col-md-3">
+                    <p class="text-uppercase small mb-3" style="letter-spacing:.02em;color:var(--text-on-ink-muted)">Naviqasiya</p>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li><a asp-controller="About" asp-action="Index" class="link-reveal" style="color:var(--text-on-ink-muted)">Haqqımda</a></li>
+                        <li><a asp-controller="Vlog" asp-action="Index" class="link-reveal" style="color:var(--text-on-ink-muted)">Vlog</a></li>
+                        <li><a asp-controller="Portfolio" asp-action="Index" class="link-reveal" style="color:var(--text-on-ink-muted)">Portfolio</a></li>
+                        <li><a asp-controller="Contact" asp-action="Index" class="link-reveal" style="color:var(--text-on-ink-muted)">Əlaqə</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <p class="text-uppercase small mb-3" style="letter-spacing:.02em;color:var(--text-on-ink-muted)">İzləyin</p>
+                    <div class="d-flex gap-3 fs-5">
+                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="divider" />
+            <p class="mb-0 small">&copy; @DateTime.Now.Year Humay Qasımlı. Bütün hüquqlar qorunur.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <partial name="_Lightbox" />
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/smart.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

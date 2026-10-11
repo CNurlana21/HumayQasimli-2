@@ -1,0 +1,95 @@
+@model HumayQasimli.Models.ViewModels.ContactFormViewModel
+@{
+    ViewData["Title"] = "Əlaqə";
+    var settings = ViewBag.SiteSettings as HumayQasimli.Models.Entities.SiteSetting;
+}
+
+<section class="section section--raised smart-section">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-md-6">
+                <div class="section-head reveal">
+                    <span class="kicker">Danışaq</span>
+                    <h1>Əlaqə</h1>
+                </div>
+                <div class="smart-form-card reveal">
+                <form asp-action="Index" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Subject" class="form-label"></label>
+                        <input asp-for="Subject" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Message" class="form-label"></label>
+                        <textarea asp-for="Message" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="Message" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-brand">Göndər</button>
+                </form>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="section-head reveal">
+                    <span class="kicker">Sosial şəbəkələr</span>
+                    <h2 style="font-size:clamp(1.5rem,3.5vw,2.1rem)">Mənə yazın</h2>
+                </div>
+                <div class="contact-grid">
+                    @if (!string.IsNullOrEmpty(settings?.InstagramUrl))
+                    {
+                        <a class="contact-chip contact-chip--instagram" href="@settings.InstagramUrl" target="_blank" rel="noopener">
+                            <span class="contact-chip__icon"><i class="bi bi-instagram"></i></span>
+                            <span class="contact-chip__text"><strong>Instagram</strong><small>Gündəlik paylaşımlar</small></span>
+                            <i class="bi bi-arrow-up-right contact-chip__arrow"></i>
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(settings?.LinkedInUrl))
+                    {
+                        <a class="contact-chip contact-chip--linkedin" href="@settings.LinkedInUrl" target="_blank" rel="noopener">
+                            <span class="contact-chip__icon"><i class="bi bi-linkedin"></i></span>
+                            <span class="contact-chip__text"><strong>LinkedIn</strong><small>Peşəkar şəbəkə</small></span>
+                            <i class="bi bi-arrow-up-right contact-chip__arrow"></i>
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(settings?.YoutubeUrl))
+                    {
+                        <a class="contact-chip contact-chip--youtube" href="@settings.YoutubeUrl" target="_blank" rel="noopener">
+                            <span class="contact-chip__icon"><i class="bi bi-youtube"></i></span>
+                            <span class="contact-chip__text"><strong>YouTube</strong><small>Video məzmun</small></span>
+                            <i class="bi bi-arrow-up-right contact-chip__arrow"></i>
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(settings?.WhatsAppNumber))
+                    {
+                        <a class="contact-chip contact-chip--whatsapp" href="https://wa.me/@settings.WhatsAppNumber" target="_blank" rel="noopener">
+                            <span class="contact-chip__icon"><i class="bi bi-whatsapp"></i></span>
+                            <span class="contact-chip__text"><strong>WhatsApp</strong><small>Sürətli mesaj</small></span>
+                            <i class="bi bi-arrow-up-right contact-chip__arrow"></i>
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(settings?.ContactEmail))
+                    {
+                        <a class="contact-chip contact-chip--email" href="mailto:@settings.ContactEmail">
+                            <span class="contact-chip__icon"><i class="bi bi-envelope-fill"></i></span>
+                            <span class="contact-chip__text"><strong>Email</strong><small>@settings.ContactEmail</small></span>
+                            <i class="bi bi-arrow-up-right contact-chip__arrow"></i>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

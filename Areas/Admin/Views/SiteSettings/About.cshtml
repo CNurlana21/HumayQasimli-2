@@ -1,0 +1,8 @@
+@model SiteSetting
+@{ ViewData["Title"] = "Haqqımda"; }
+<h1 class="mb-4">Haqqımda bölməsi</h1>
+<form asp-action="About" method="post" class="col-md-8">
+    <div class="mb-3"><label class="form-label">Başlıq</label><input asp-for="AboutTitle" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Mətn</label><textarea asp-for="AboutContent" class="form-control" rows="8"></textarea></div>
+    <button type="submit" class="btn btn-dark">Yadda saxla</button>
+</form>

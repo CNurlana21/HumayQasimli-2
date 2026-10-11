@@ -1,0 +1,18 @@
+@* Tam ekran şəkil (Lightbox). [data-lightbox] atributu olan hər elementə klikləndikdə açılır. *@
+<div class="lightbox" id="smLightbox" role="dialog" aria-modal="true" aria-label="Şəkil görüntüsü" aria-hidden="true">
+    <div class="lightbox__backdrop" data-lb-close></div>
+    <button type="button" class="lightbox__btn lightbox__close" data-lb-close aria-label="Bağla"><i class="bi bi-x-lg"></i></button>
+    <div class="lightbox__counter" aria-live="polite"></div>
+    <button type="button" class="lightbox__btn lightbox__prev" aria-label="Əvvəlki"><i class="bi bi-chevron-left"></i></button>
+    <button type="button" class="lightbox__btn lightbox__next" aria-label="Növbəti"><i class="bi bi-chevron-right"></i></button>
+    <figure class="lightbox__figure">
+        <div class="lightbox__stage is-loading">
+            <img class="lightbox__img" alt="" draggable="false" />
+            <div class="lightbox__spinner"></div>
+        </div>
+        <figcaption class="lightbox__caption">
+            <strong class="lightbox__title"></strong>
+            <span class="lightbox__sub"></span>
+        </figcaption>
+    </figure>
+</div>

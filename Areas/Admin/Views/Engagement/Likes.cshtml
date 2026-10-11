@@ -1,0 +1,15 @@
+@model HumayQasimli.Models.ViewModels.PagedResult<Like>
+@{ ViewData["Title"] = "Like-lar"; }
+<h1 class="mb-3">Like-lar</h1>
+<table class="table table-bordered bg-white align-middle">
+    <thead><tr><th>İstifadəçi</th><th>Vlog</th><th>Tarix</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var l in Model.Items)
+    {
+        <tr>
+            <td>@l.User?.FullName</td><td>@l.Vlog?.Title</td><td>@l.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+            <td><form asp-action="DeleteLike" asp-route-id="@l.Id" method="post" onsubmit="return confirm('Silinsin?')"><button type="submit" class="btn btn-sm btn-outline-danger">Sil</button></form></td>
+        </tr>
+    }
+    </tbody>
+</table>

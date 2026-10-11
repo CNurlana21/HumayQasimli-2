@@ -1,0 +1,169 @@
+@{
+    ViewData["Title"] = "Ana səhifə";
+    var settings = ViewBag.SiteSettings as HumayQasimli.Models.Entities.SiteSetting;
+    var featuredVlogs = ViewBag.FeaturedVlogs as List<HumayQasimli.Models.Entities.Vlog>;
+    var featuredPortfolio = ViewBag.FeaturedPortfolio as List<HumayQasimli.Models.Entities.PortfolioProject>;
+
+    var heroTitle = settings?.HeroTitle ?? "Humay Qasımlı";
+    var words = heroTitle.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    var mid = (int)Math.Ceiling(words.Length / 2.0);
+    var line1 = string.Join(' ', words.Take(mid));
+    var line2 = string.Join(' ', words.Skip(mid));
+
+    // Hero slider images: reuse whatever the admin has already uploaded
+    // (profile photo, then featured vlog covers / portfolio shots) -
+    // no new backend field needed, the existing content management drives it.
+    var heroImages = new List<string>();
+    if (!string.IsNullOrEmpty(settings?.ProfileImageUrl)) heroImages.Add(settings.ProfileImageUrl);
+    if (featuredVlogs != null) heroImages.AddRange(featuredVlogs.Where(v => !string.IsNullOrEmpty(v.CoverImageUrl)).Select(v => v.CoverImageUrl!));
+    if (featuredPortfolio != null) heroImages.AddRange(featuredPortfolio.Where(p => !string.IsNullOrEmpty(p.ImageUrl)).Select(p => p.ImageUrl!));
+    heroImages = heroImages.Distinct().Take(6).ToList();
+}
+
+<section class="hero">
+    <div class="hero__bg" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="container">
+        <div class="hero__grid">
+            <div>
+                <span class="hero__greeting">Salam 👋, mən</span>
+                <span class="hero__eyebrow">Mentor &amp; Koç</span>
+                <h1 class="hero__title">
+                    <span class="line"><span>@line1</span></span>
+                    @if (!string.IsNullOrWhiteSpace(line2))
+                    {
+                        <span class="line"><span>@line2</span></span>
+                    }
+                </h1>
+                <p class="hero__sub">@(settings?.HeroSubtitle ?? "Mentorluq, koçluq və şəxsi inkişaf üzrə iş və insanlar arasında körpü qururam.")</p>
+                <div class="hero__actions">
+                    <a class="btn btn-brand" asp-controller="MentorMeeting" asp-action="Index">Mentor görüşü </a>
+                    <a class="btn btn-outline-light" asp-controller="Vlog" asp-action="Index">Vlog-lara bax</a>
+                </div>
+            </div>
+
+            <div class="hero__portrait-wrap">
+                @if (heroImages.Any())
+                {
+                    <div class="hero-slider" id="heroSlider">
+                        <div class="hero-slider__track">
+                            @for (int i = 0; i < heroImages.Count; i++)
+                            {
+                                <div class="hero-slider__slide @(i == 0 ? "is-active" : "")">
+                                    <img src="@heroImages[i]" alt="Humay Qasımlı" loading="@(i == 0 ? "eager" : "lazy")" />
+                                </div>
+                            }
+                        </div>
+                        @if (heroImages.Count > 1)
+                        {
+                            <button type="button" class="hero-slider__nav hero-slider__nav--prev" aria-label="Əvvəlki şəkil"><i class="bi bi-chevron-left"></i></button>
+                            <button type="button" class="hero-slider__nav hero-slider__nav--next" aria-label="Növbəti şəkil"><i class="bi bi-chevron-right"></i></button>
+                            <div class="hero-slider__dots">
+                                @for (int i = 0; i < heroImages.Count; i++)
+                                {
+                                    <button type="button" class="hero-slider__dot @(i == 0 ? "is-active" : "")" data-index="@i" aria-label="Şəkil @(i + 1)"></button>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="hero-slider d-flex align-items-center justify-content-center">
+                        <i class="bi bi-person" style="font-size:5rem;color:var(--text-on-ink-muted)"></i>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (featuredVlogs != null && featuredVlogs.Any())
+{
+    <section class="section section--raised smart-section">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="kicker">Ən son</span>
+                <h2>Seçilmiş vlog-lar</h2>
+                <p class="lead">Karyera, liderlik və şəxsi inkişaf haqqında qısa görüşlər.</p>
+            </div>
+            <div class="row g-4">
+                @for (int i = 0; i < featuredVlogs.Count; i++)
+                {
+                    var v = featuredVlogs[i];
+                    <div class="col-12 col-sm-6 col-lg-4 reveal" style="transition-delay:@(i * 90)ms">
+                        <a class="smart-card @(i == 0 ? "smart-card--feature" : "")" asp-controller="Vlog" asp-action="Details" asp-route-id="@v.Id">
+                            <div class="smart-card__media @(string.IsNullOrEmpty(v.CoverImageUrl) ? "smart-card__media--empty" : "")">
+                                @if (!string.IsNullOrEmpty(v.CoverImageUrl))
+                                {
+                                    <img src="@v.CoverImageUrl" alt="@v.Title" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <i class="bi bi-camera-video"></i>
+                                }
+                                <div class="smart-card__glass"></div>
+                                <span class="smart-card__play"><i class="bi bi-play-fill"></i></span>
+                                @if (v.Category != null)
+                                {
+                                    <span class="smart-badge smart-badge--cat"><i class="bi bi-tag-fill"></i> @v.Category.Name</span>
+                                }
+                                <span class="smart-badge smart-badge--views"><i class="bi bi-eye-fill"></i> @v.ViewCount</span>
+                                <span class="smart-badge smart-badge--date"><i class="bi bi-calendar3"></i> @v.PublishDate.ToString("dd.MM.yyyy")</span>
+                            </div>
+                            <div class="smart-card__body">
+                                <h3 class="smart-card__title">@v.Title</h3>
+                                <span class="smart-card__more">İzlə <i class="bi bi-arrow-right"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@if (featuredPortfolio != null && featuredPortfolio.Any())
+{
+    <section class="section section--mist smart-section smart-section--alt">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="kicker">Nümunələr</span>
+                <h2>Seçilmiş layihələr</h2>
+            </div>
+            <div class="row g-4">
+                @{ var pi = 0; }
+                @foreach (var p in featuredPortfolio)
+                {
+                    <div class="col-12 col-sm-6 col-lg-4 reveal" style="transition-delay:@(pi * 90)ms">
+                        <a class="smart-card" asp-controller="Portfolio" asp-action="Details" asp-route-id="@p.Id">
+                            <div class="smart-card__media @(string.IsNullOrEmpty(p.ImageUrl) ? "smart-card__media--empty" : "")">
+                                @if (!string.IsNullOrEmpty(p.ImageUrl))
+                                {
+                                    <img src="@p.ImageUrl" alt="@p.Title" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <i class="bi bi-briefcase"></i>
+                                }
+                                <div class="smart-card__glass"></div>
+                            </div>
+                            <div class="smart-card__body">
+                                <h3 class="smart-card__title">@p.Title</h3>
+                                <span class="smart-card__more">Ətraflı <i class="bi bi-arrow-right"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                    pi++;
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<section class="section section--ink">
+    <div class="container text-center reveal">
+        <h2 style="max-width:20ch;margin:0 auto 1.25rem">Növbəti addımı birlikdə atmağa hazırsınız?</h2>
+        <p class="mx-auto" style="max-width:48ch">Bir mentor görüşü ilə başlayın — sualınızı, məqsədinizi bölüşün, birlikdə yol xəritəsi quraq.</p>
+        <a class="btn btn-brand mt-2" asp-controller="Contact" asp-action="Index">Əlaqə saxla</a>
+    </div>
+</section>

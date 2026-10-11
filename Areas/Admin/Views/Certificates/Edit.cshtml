@@ -1,0 +1,25 @@
+@model Certificate
+@{
+    ViewData["Title"] = "Sertifikatı redaktə et";
+}
+<h1 class="mb-4">Sertifikatı redaktə et</h1>
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" class="col-md-6">
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" class="mb-2" style="width:160px;height:100px;object-fit:cover" />
+        <div class="form-check mb-3">
+            <input type="checkbox" name="removeImage" class="form-check-input" id="removeImage" />
+            <label class="form-check-label" for="removeImage">Cari şəkli/PDF-i sil</label>
+        </div>
+    }
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3"><label class="form-label">Başlıq</label><input asp-for="Title" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Verən qurum</label><input asp-for="IssuedBy" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Yeni şəkil / PDF</label><input type="file" name="image" class="form-control" accept=".jpg,.jpeg,.png,.webp,.pdf" /></div>
+    <div class="mb-3"><label class="form-label">Tarix</label><input asp-for="IssueDate" type="date" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Təsdiq linki</label><input asp-for="CredentialUrl" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Sıra</label><input asp-for="DisplayOrder" type="number" class="form-control" /></div>
+    <button type="submit" class="btn btn-dark">Yadda saxla</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Ləğv et</a>
+</form>

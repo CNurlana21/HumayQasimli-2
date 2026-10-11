@@ -1,0 +1,20 @@
+@model SiteSetting
+@{
+    ViewData["Title"] = "Profil";
+}
+<h1 class="mb-4">Profil</h1>
+<form asp-action="Profile" method="post" enctype="multipart/form-data" class="col-md-6">
+    @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+    {
+        <img src="@Model.ProfileImageUrl" class="rounded-circle mb-2" style="width:120px;height:120px;object-fit:cover" />
+        <div class="form-check mb-3">
+            <input type="checkbox" name="removeProfileImage" class="form-check-input" id="removeProfileImage" />
+            <label class="form-check-label" for="removeProfileImage">Cari şəkli sil</label>
+        </div>
+    }
+    <div class="mb-3"><label class="form-label">Sayt adı</label><input asp-for="SiteName" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Hero başlıq</label><input asp-for="HeroTitle" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Hero alt başlıq</label><input asp-for="HeroSubtitle" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Profil şəkli</label><input type="file" name="profileImage" class="form-control" accept=".jpg,.jpeg,.png,.webp" /></div>
+    <button type="submit" class="btn btn-dark">Yadda saxla</button>
+</form>

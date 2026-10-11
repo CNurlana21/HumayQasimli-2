@@ -1,0 +1,37 @@
+@model List<HumayQasimli.Models.Entities.Certificate>
+@{ ViewData["Title"] = "Sertifikatlar"; }
+
+<section class="section section--raised smart-section">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="kicker">Etimad</span>
+            <h1>Sertifikatlar</h1>
+        </div>
+        <div class="row g-4 g-xl-5">
+            @{ var idx = 0; }
+            @foreach (var c in Model)
+            {
+                <div class="col-12 col-md-6 col-lg-4 reveal" style="transition-delay:@((idx % 3) * 90)ms">
+                    <article class="cert-card">
+                        @if (!string.IsNullOrEmpty(c.ImageUrl))
+                        {
+                            <button type="button" class="cert-card__media" data-lightbox="@c.ImageUrl" data-lightbox-group="certs" data-title="@c.Title" data-sub="@c.IssuedBy" aria-label="@c.Title sertifikatını böyüt">
+                                <img src="@c.ImageUrl" alt="@c.Title" loading="lazy" />
+                                <span class="cert-card__zoom"><i class="bi bi-arrows-fullscreen"></i> Böyüt</span>
+                            </button>
+                        }
+                        <div class="cert-card__body">
+                            <h3 class="cert-card__title">@c.Title</h3>
+                            <p class="cert-card__issuer"><i class="bi bi-patch-check-fill"></i> @c.IssuedBy</p>
+                            @if (!string.IsNullOrEmpty(c.CredentialUrl))
+                            {
+                                <a href="@c.CredentialUrl" target="_blank" rel="noopener" class="link-reveal cert-card__link">Baxın <i class="bi bi-box-arrow-up-right"></i></a>
+                            }
+                        </div>
+                    </article>
+                </div>
+                idx++;
+            }
+        </div>
+    </div>
+</section>

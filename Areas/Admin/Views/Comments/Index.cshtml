@@ -1,0 +1,36 @@
+@model HumayQasimli.Models.ViewModels.PagedResult<Comment>
+@{
+    ViewData["Title"] = "Şərhlər";
+}
+<h1 class="mb-3">Şərhlər</h1>
+<form method="get" class="mb-3 col-md-4"><input type="text" name="search" value="@Model.SearchTerm" class="form-control" placeholder="Axtar..." /></form>
+<table class="table table-bordered bg-white align-middle">
+    <thead><tr><th>İstifadəçi</th><th>Vlog</th><th>Mətn</th><th>Cavab</th><th>Tarix</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var c in Model.Items)
+        {
+            <tr>
+                <td>@c.User?.FullName</td>
+                <td>@c.Vlog?.Title</td>
+                <td>@c.Content</td>
+                <td>@(string.IsNullOrEmpty(c.AdminReply) ? "-" : "Verilib")</td>
+                <td>@c.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-sm btn-outline-primary">Bax / Cavabla</a>
+                    <form asp-action="Delete" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('Silinsin?')"><button type="submit" class="btn btn-sm btn-outline-danger">Sil</button></form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")"><a class="page-link" href="?page=@i&search=@Model.SearchTerm">@i</a></li>
+            }
+        </ul>
+    </nav>
+}

@@ -1,0 +1,14 @@
+@model Certificate
+@{ ViewData["Title"] = "Yeni sertifikat"; }
+<h1 class="mb-4">Yeni sertifikat</h1>
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3"><label class="form-label">Başlıq</label><input asp-for="Title" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Verən qurum</label><input asp-for="IssuedBy" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Şəkil / PDF</label><input type="file" name="image" class="form-control" accept=".jpg,.jpeg,.png,.webp,.pdf" /></div>
+    <div class="mb-3"><label class="form-label">Tarix</label><input asp-for="IssueDate" type="date" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Təsdiq linki</label><input asp-for="CredentialUrl" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Sıra</label><input asp-for="DisplayOrder" type="number" class="form-control" /></div>
+    <button type="submit" class="btn btn-dark">Yadda saxla</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Ləğv et</a>
+</form>

@@ -1,0 +1,32 @@
+@model HumayQasimli.Models.Entities.PortfolioProject
+@{ ViewData["Title"] = Model.Title; }
+
+<section class="section section--raised smart-section">
+    <div class="container" style="max-width:820px">
+        <a asp-action="Index" class="link-reveal mb-4 d-inline-block">&larr; Bütün layihələr</a>
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" class="img-fluid mb-4" style="max-height:440px;object-fit:cover;width:100%;border-radius:var(--radius-lg)" alt="@Model.Title" />
+        }
+        <h1>@Model.Title</h1>
+        @if (Model.Category != null) { <span class="tile__tag d-inline-block mb-3">@Model.Category.Name</span> }
+        <div class="readmore mb-3" data-readmore>
+            <div class="readmore__text read-text" style="--rm-lines:12">@Model.Description</div>
+            <button type="button" class="readmore__btn" aria-expanded="false"><span>Ətraflı oxu</span> <i class="bi bi-chevron-down"></i></button>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.TechStack))
+        {
+            <p><strong style="color:var(--ink)">Texnologiyalar:</strong> @Model.TechStack</p>
+        }
+        <div class="d-flex gap-2 mt-3">
+            @if (!string.IsNullOrEmpty(Model.ProjectUrl))
+            {
+                <a href="@Model.ProjectUrl" target="_blank" class="btn btn-brand">Layihəyə bax</a>
+            }
+            @if (!string.IsNullOrEmpty(Model.GithubUrl))
+            {
+                <a href="@Model.GithubUrl" target="_blank" class="btn btn-outline-brand"><i class="bi bi-github"></i> GitHub</a>
+            }
+        </div>
+    </div>
+</section>

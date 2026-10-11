@@ -1,0 +1,11 @@
+@model SiteSetting
+@{ ViewData["Title"] = "Sosial linklər"; }
+<h1 class="mb-4">Sosial linklər / Əlaqə</h1>
+<form asp-action="SocialLinks" method="post" class="col-md-6">
+    <div class="mb-3"><label class="form-label">Instagram</label><input asp-for="InstagramUrl" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">LinkedIn</label><input asp-for="LinkedInUrl" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">YouTube kanalı</label><input asp-for="YoutubeUrl" class="form-control" placeholder="https://www.youtube.com/@@kanaladi" /></div>
+    <div class="mb-3"><label class="form-label">WhatsApp nömrəsi (məs: 994501234567)</label><input asp-for="WhatsAppNumber" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Əlaqə email</label><input asp-for="ContactEmail" class="form-control" /></div>
+    <button type="submit" class="btn btn-dark">Yadda saxla</button>
+</form>

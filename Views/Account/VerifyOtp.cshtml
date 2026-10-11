@@ -1,0 +1,26 @@
+@model HumayQasimli.Models.ViewModels.VerifyOtpViewModel
+@{ ViewData["Title"] = "Email təsdiqi"; }
+<section class="section section--mist smart-section">
+    <div class="container">
+        <div class="col-md-5 mx-auto tile text-center reveal" style="padding:2.5rem">
+            <h1 class="mb-3" style="font-size:1.6rem">Email təsdiqi</h1>
+            <p class="tile__meta mb-4">@Model.Email ünvanına göndərilən 6 rəqəmli kodu daxil edin.</p>
+            <form asp-action="VerifyOtp" method="post">
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="Email" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <input asp-for="Code" class="form-control form-control-lg text-center" maxlength="6" autocomplete="one-time-code" style="letter-spacing:.4em;font-weight:600" />
+                    <span asp-validation-for="Code" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-brand w-100">Təsdiqlə</button>
+            </form>
+            <form asp-action="ResendOtp" method="post" class="mt-3">
+                <input type="hidden" name="userId" value="@Model.UserId" />
+                <input type="hidden" name="email" value="@Model.Email" />
+                <button type="submit" class="btn btn-link link-reveal">Kodu yenidən göndər</button>
+            </form>
+        </div>
+    </div>
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

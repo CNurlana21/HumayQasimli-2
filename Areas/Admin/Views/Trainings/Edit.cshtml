@@ -1,0 +1,25 @@
+@model Training
+@{
+    ViewData["Title"] = "Təlimi redaktə et";
+}
+<h1 class="mb-4">Təlimi redaktə et</h1>
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" class="col-md-6">
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" class="mb-2" style="width:180px;height:110px;object-fit:cover" />
+        <div class="form-check mb-3">
+            <input type="checkbox" name="removeImage" class="form-check-input" id="removeImage" />
+            <label class="form-check-label" for="removeImage">Cari şəkli sil</label>
+        </div>
+    }
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3"><label class="form-label">Başlıq</label><input asp-for="Title" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Açıqlama</label><textarea asp-for="Description" class="form-control"></textarea></div>
+    <div class="mb-3"><label class="form-label">Yeni şəkil</label><input type="file" name="image" class="form-control" accept=".jpg,.jpeg,.png,.webp" /></div>
+    <div class="mb-3"><label class="form-label">Tarix</label><input asp-for="StartDate" type="date" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Qeydiyyat linki</label><input asp-for="RegistrationUrl" class="form-control" /></div>
+    <div class="form-check mb-3"><input asp-for="IsActive" class="form-check-input" /><label class="form-check-label">Aktiv</label></div>
+    <button type="submit" class="btn btn-dark">Yadda saxla</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Ləğv et</a>
+</form>

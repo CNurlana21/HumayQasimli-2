@@ -1,0 +1,159 @@
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using HumayQasimli.Models.Entities
+@using HumayQasimli.Data
+@inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext Db
+@{
+    var adminId = UserManager.GetUserId(User);
+    var adminUnreadCount = adminId != null
+        ? await Db.Notifications.CountAsync(n => n.UserId == adminId && !n.IsRead)
+        : 0;
+}
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <style>
+            :root {
+                --a-ink: #241f45;
+                --a-gold: #8d7ce0;
+            }
+
+            body {
+                background: #eaf3fc;
+                font-family: "Manrope", sans-serif;
+            }
+
+            h1, h2, h3 {
+                font-family: "Fraunces", serif;
+            }
+
+            #adminSidebar {
+                min-height: 100vh;
+                background: var(--a-ink);
+            }
+
+                #adminSidebar .text-white {
+                    font-family: "Fraunces", serif;
+                }
+
+                #adminSidebar a {
+                    color: #b9b8ae;
+                    display: block;
+                    padding: .6rem 1rem;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    transition: background .15s ease, color .15s ease;
+                    position: relative;
+                }
+
+                    #adminSidebar a:hover, #adminSidebar a.active {
+                        background: rgba(255,255,255,.06);
+                        color: #fff;
+                    }
+
+                #adminSidebar h6 {
+                    color: #7a7971;
+                    text-transform: uppercase;
+                    font-size: .72rem;
+                    margin: 1rem 0 .3rem .5rem;
+                    letter-spacing: .04em;
+                }
+
+            .btn-dark {
+                background: var(--a-ink);
+                border-color: var(--a-ink);
+            }
+
+                .btn-dark:hover {
+                    background: var(--a-gold);
+                    border-color: var(--a-gold);
+                }
+
+            .card, .table {
+                border-radius: 4px;
+            }
+
+            .form-control:focus, .form-select:focus {
+                border-color: var(--a-gold);
+                box-shadow: 0 0 0 3px rgba(184,134,58,.18);
+            }
+
+            .nav-badge {
+                position: absolute;
+                right: .75rem;
+                top: 50%;
+                transform: translateY(-50%);
+                background: #dc3545;
+                color: #fff;
+                border-radius: 10px;
+                font-size: .65rem;
+                padding: .1em .5em;
+            }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <nav id="adminSidebar" class="p-3" style="width:250px;flex-shrink:0">
+            <a class="text-white fs-5 fw-bold d-block mb-3" href="/Admin/Dashboard">Humay Admin</a>
+
+            <a href="/Admin/Dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a href="/Admin/Engagement/Notifications">
+                <i class="bi bi-bell"></i> Bildirişlər
+                @if (adminUnreadCount > 0)
+                {
+                    <span class="nav-badge">@(adminUnreadCount > 99 ? "99+" : adminUnreadCount.ToString())</span>
+                }
+            </a>
+
+            <h6>Məzmun</h6>
+            <a href="/Admin/SiteSettings/Profile"><i class="bi bi-person-badge"></i> Profil</a>
+            <a href="/Admin/SiteSettings/About"><i class="bi bi-info-circle"></i> Haqqımda</a>
+            <a href="/Admin/MentorMeetings"><i class="bi bi-people"></i> Mentor görüşləri</a>
+         
+            <a href="/Admin/Trainings"><i class="bi bi-mortarboard"></i> Təlimlər</a>
+            <a href="/Admin/Certificates"><i class="bi bi-award"></i> Sertifikatlar</a>
+            <a href="/Admin/Portfolio"><i class="bi bi-kanban"></i> Portfolio</a>
+            <a href="/Admin/Vlogs"><i class="bi bi-camera-video"></i> Vlogs</a>
+            <a href="/Admin/Blog"><i class="bi bi-journal-text"></i> Blog</a>
+            <a href="/Admin/Categories"><i class="bi bi-tags"></i> Kateqoriyalar</a>
+
+            <h6>İstifadəçilər</h6>
+            <a href="/Admin/Users"><i class="bi bi-people-fill"></i> İstifadəçilər</a>
+            <a href="/Admin/Engagement/Likes"><i class="bi bi-heart"></i> Like-lar</a>
+            <a href="/Admin/Comments"><i class="bi bi-chat-dots"></i> Şərhlər</a>
+
+            <h6>Mesajlar</h6>
+            <a href="/Admin/ContactMessages"><i class="bi bi-envelope-open"></i> Əlaqə mesajları</a>
+
+            <h6>Sistem</h6>
+            <a href="/Admin/Media"><i class="bi bi-images"></i> Media</a>
+            <a href="/Admin/SiteSettings/SocialLinks"><i class="bi bi-link-45deg"></i> Sosial linklər</a>
+            <a href="/Admin/SiteSettings/General"><i class="bi bi-gear"></i> Sayt tənzimləmələri</a>
+            <a href="/" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Saytı gör</a>
+        </nav>
+
+        <div class="flex-fill p-4">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">@TempData["Success"]</div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,83 @@
+@model HumayQasimli.Models.Entities.SiteSetting
+@{
+    ViewData["Title"] = "Haqqımda";
+    var certificates = ViewBag.Certificates as List<HumayQasimli.Models.Entities.Certificate>;
+}
+
+<section class="section section--raised smart-section">
+    <div class="container">
+        <div class="row align-items-center g-4 g-lg-5">
+
+            <div class="col-lg-7 order-2 order-lg-1">
+                <div class="section-head reveal">
+                    <span class="kicker">Haqqımda</span>
+                    <h1>@(Model?.AboutTitle ?? "Haqqımda")</h1>
+                </div>
+                <div class="glass-panel reveal">
+                    <div class="readmore" data-readmore>
+                        <div class="readmore__text read-text" style="--rm-lines:10">@(Model?.AboutContent ?? "")</div>
+                        <button type="button" class="readmore__btn" aria-expanded="false"><span>Ətraflı oxu</span> <i class="bi bi-chevron-down"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 order-1 order-lg-2">
+                <div class="about-avatar reveal">
+                    <span class="about-avatar__glow" aria-hidden="true"></span>
+                    <span class="about-avatar__ring" aria-hidden="true"></span>
+                    <span class="about-avatar__dash" aria-hidden="true"></span>
+                    <span class="about-avatar__orbit" aria-hidden="true"><i></i></span>
+
+                    <div class="about-avatar__photo">
+                        @if (!string.IsNullOrEmpty(Model?.ProfileImageUrl))
+                        {
+                            <img src="@Model.ProfileImageUrl" alt="Humay Qasımlı" loading="eager" />
+                        }
+                        else
+                        {
+                            <i class="bi bi-person"></i>
+                        }
+                    </div>
+
+                    <span class="avatar-chip avatar-chip--a"><i class="bi bi-stars"></i> Mentor</span>
+                    <span class="avatar-chip avatar-chip--b"><i class="bi bi-lightning-charge-fill"></i> Koç</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@if (certificates != null && certificates.Any())
+{
+    <section class="section section--mist smart-section smart-section--alt">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="kicker">Etimad</span>
+                <h2>Sertifikatlar</h2>
+            </div>
+            <div class="row g-4 g-xl-5">
+                @{ var idx = 0; }
+                @foreach (var c in certificates)
+                {
+                    <div class="col-12 col-md-6 col-lg-4 reveal" style="transition-delay:@((idx % 3) * 90)ms">
+                        <article class="cert-card">
+                            @if (!string.IsNullOrEmpty(c.ImageUrl))
+                            {
+                                <button type="button" class="cert-card__media" data-lightbox="@c.ImageUrl" data-lightbox-group="certs" data-title="@c.Title" data-sub="@c.IssuedBy" aria-label="@c.Title sertifikatını böyüt">
+                                    <img src="@c.ImageUrl" alt="@c.Title" loading="lazy" />
+                                    <span class="cert-card__zoom"><i class="bi bi-arrows-fullscreen"></i> Böyüt</span>
+                                </button>
+                            }
+                            <div class="cert-card__body">
+                                <h3 class="cert-card__title">@c.Title</h3>
+                                <p class="cert-card__issuer"><i class="bi bi-patch-check-fill"></i> @c.IssuedBy</p>
+                            </div>
+                        </article>
+                    </div>
+                    idx++;
+                }
+            </div>
+        </div>
+    </section>
+}

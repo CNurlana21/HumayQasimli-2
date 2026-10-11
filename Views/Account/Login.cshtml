@@ -1,0 +1,63 @@
+@model HumayQasimli.Models.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Giriş";
+}
+<section class="section section--mist smart-section">
+    <div class="container">
+        <div class="col-md-5 mx-auto tile reveal" style="padding:2.5rem">
+            <h1 class="mb-4 text-center" style="font-size:1.8rem">Giriş</h1>
+            <form asp-action="Login" method="post">
+                <input type="hidden" asp-for="ReturnUrl" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <div class="password-field">
+                        <input asp-for="Password" class="form-control" />
+                        <button type="button" class="password-toggle" aria-label="Şifrəni göstər">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-check mb-3">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label"></label>
+                </div>
+                <button type="submit" class="btn btn-brand w-100">Daxil ol</button>
+            </form>
+            <hr class="hairline-top" style="border:none;margin:1.5rem 0" />
+            <form asp-action="GoogleLogin" method="post">
+                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                <button type="submit" class="btn btn-outline-brand w-100"><i class="bi bi-google"></i> Google ilə daxil ol</button>
+            </form>
+            <p class="text-center mt-3 mb-0">Hesabınız yoxdur? <a class="link-reveal" asp-action="Register">Qeydiyyatdan keçin</a></p>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('.password-toggle').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var wrapper = btn.closest('.password-field');
+                var input = wrapper ? wrapper.querySelector('input') : null;
+                if (!input) return;
+
+                var isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+
+                var icon = btn.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('bi-eye', !isHidden);
+                    icon.classList.toggle('bi-eye-slash', isHidden);
+                }
+                btn.setAttribute('aria-label', isHidden ? 'Şifrəni gizlət' : 'Şifrəni göstər');
+            });
+        });
+    </script>
+}

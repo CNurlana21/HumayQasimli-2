@@ -1,0 +1,52 @@
+@model List<HumayQasimli.Models.Entities.Training>
+@{ ViewData["Title"] = "Təlimlər"; }
+
+<section class="section section--raised smart-section">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="kicker">Struktur öyrənmə</span>
+            <h1>Təlimlər</h1>
+        </div>
+
+        <div class="smart-filter reveal">
+            <label class="smart-filter__search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="cardSearch" placeholder="Təlimlərdə axtar..." autocomplete="off" aria-label="Axtarış" />
+            </label>
+            <span class="smart-filter__count" id="cardCount"></span>
+        </div>
+
+        <div class="row g-4">
+            @{ var idx = 0; }
+            @foreach (var t in Model)
+            {
+                <div class="col-12 col-sm-6 col-lg-4 reveal" data-card data-search="@t.Title" style="transition-delay:@((idx % 3) * 90)ms">
+                    <a class="smart-card" asp-action="Details" asp-route-id="@t.Id">
+                        <div class="smart-card__media @(string.IsNullOrEmpty(t.ImageUrl) ? "smart-card__media--empty" : "")">
+                            @if (!string.IsNullOrEmpty(t.ImageUrl))
+                            {
+                                <img src="@t.ImageUrl" alt="@t.Title" loading="lazy" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-mortarboard"></i>
+                            }
+                            <div class="smart-card__glass"></div>
+                            @if (t.StartDate.HasValue)
+                            {
+                                <span class="smart-badge smart-badge--date"><i class="bi bi-calendar3"></i> @t.StartDate.Value.ToString("dd.MM.yyyy")</span>
+                            }
+                        </div>
+                        <div class="smart-card__body">
+                            <h3 class="smart-card__title">@t.Title</h3>
+                            <span class="smart-card__more">Ətraflı <i class="bi bi-arrow-right"></i></span>
+                        </div>
+                    </a>
+                </div>
+                idx++;
+            }
+        </div>
+
+        <div class="smart-empty" id="cardEmpty"><i class="bi bi-search-heart"></i>Axtarışa uyğun nəticə tapılmadı.</div>
+    </div>
+</section>

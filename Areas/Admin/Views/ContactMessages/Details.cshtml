@@ -1,0 +1,29 @@
+@model ContactMessage
+@{
+    ViewData["Title"] = "Mesaj";
+}
+<h1 class="mb-4">@Model.Subject</h1>
+<p><strong>Ad:</strong> @Model.Name</p>
+<p><strong>Email:</strong> <a href="mailto:@Model.Email">@Model.Email</a></p>
+<p><strong>Tarix:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+@if (!string.IsNullOrEmpty(Model.UserId))
+{
+    <p class="text-muted small">Bu mesaj giriş etmiş istifadəçi tərəfindən göndərilib — cavab onun bildirişlər bölməsində görünəcək.</p>
+}
+<div class="card mb-3"><div class="card-body">@Model.Message</div></div>
+
+@if (!string.IsNullOrEmpty(Model.AdminReply))
+{
+    <div class="alert alert-light border"><strong>Cavabınız:</strong> @Model.AdminReply <div class="text-muted small">@Model.RepliedAt?.ToString("dd.MM.yyyy HH:mm")</div></div>
+}
+
+<form asp-action="Reply" asp-route-id="@Model.Id" method="post" class="col-md-6 mb-3">
+    <div class="mb-3">
+        <label class="form-label">Cavab yaz</label>
+        <textarea name="reply" class="form-control" rows="4">@Model.AdminReply</textarea>
+    </div>
+    <button type="submit" class="btn btn-dark">Cavabla</button>
+</form>
+
+<form asp-action="ToggleRead" asp-route-id="@Model.Id" method="post" class="d-inline"><button type="submit" class="btn btn-outline-primary">Oxundu/Oxunmadı</button></form>
+<a asp-action="Index" class="btn btn-outline-secondary">Geri</a>

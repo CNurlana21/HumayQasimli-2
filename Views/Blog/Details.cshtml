@@ -1,0 +1,21 @@
+﻿@model HumayQasimli.Models.Entities.Blog
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<section class="section section--raised smart-section">
+    <div class="container" style="max-width:820px">
+        <a asp-action="Index" class="link-reveal mb-4 d-inline-block">&larr; Bütün bloqlar</a>
+
+        @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+        {
+            <img src="@Model.CoverImageUrl" class="img-fluid mb-4" style="max-height:440px;object-fit:cover;width:100%;border-radius:var(--radius-lg)" alt="@Model.Title" />
+        }
+
+        <span class="tile__tag">@Model.Category?.Name</span>
+        <h1>@Model.Title</h1>
+        <p class="tile__meta mb-4">@Model.PublishDate.ToString("dd.MM.yyyy")</p>
+
+        <div class="read-text">@Model.Content</div>
+    </div>
+</section>

@@ -1,0 +1,24 @@
+@model HumayQasimli.Models.Entities.Training
+@{ ViewData["Title"] = Model.Title; }
+
+<section class="section section--raised smart-section">
+    <div class="container" style="max-width:820px">
+        <a asp-action="Index" class="link-reveal mb-4 d-inline-block">&larr; Bütün təlimlər</a>
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" class="img-fluid mb-4" style="max-height:420px;object-fit:cover;width:100%;border-radius:var(--radius-lg)" alt="@Model.Title" />
+        }
+        <h1>@Model.Title</h1>
+        <div class="readmore mb-3" data-readmore>
+            <div class="readmore__text read-text" style="--rm-lines:12">@Model.Description</div>
+            <button type="button" class="readmore__btn" aria-expanded="false"><span>Ətraflı oxu</span> <i class="bi bi-chevron-down"></i></button>
+        </div>
+        <ul class="list-unstyled" style="color:var(--text-muted)">
+            @if (Model.StartDate.HasValue) { <li><strong style="color:var(--ink)">Tarix:</strong> @Model.StartDate.Value.ToString("dd.MM.yyyy")</li> }
+        </ul>
+        @if (!string.IsNullOrEmpty(Model.RegistrationUrl))
+        {
+            <a href="@Model.RegistrationUrl" target="_blank" class="btn btn-brand">Qeydiyyatdan keç</a>
+        }
+    </div>
+</section>

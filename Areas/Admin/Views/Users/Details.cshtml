@@ -1,0 +1,10 @@
+@model ApplicationUser
+@{ ViewData["Title"] = Model.FullName; }
+<h1 class="mb-4">@Model.FullName</h1>
+<ul class="list-group col-md-6">
+    <li class="list-group-item"><strong>Email:</strong> @Model.Email</li>
+    <li class="list-group-item"><strong>Rollar:</strong> @string.Join(", ", (IList<string>)ViewBag.Roles)</li>
+    <li class="list-group-item"><strong>Şərh sayı:</strong> @ViewBag.CommentsCount</li>
+    <li class="list-group-item"><strong>Qeydiyyat tarixi:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</li>
+</ul>
+<a asp-action="Index" class="btn btn-outline-secondary mt-3">Geri</a>

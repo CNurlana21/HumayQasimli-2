@@ -1,0 +1,92 @@
+@model List<HumayQasimli.Models.Entities.Vlog>
+@{
+    ViewData["Title"] = "Vlog";
+    var categories = ViewBag.Categories as List<HumayQasimli.Models.Entities.Category>;
+    int? selected = ViewBag.SelectedCategoryId;
+    int page = ViewBag.Page;
+    int totalPages = ViewBag.TotalPages;
+}
+
+<section class="section section--raised smart-section">
+    <div class="container">
+        <div class="section-head reveal">
+            <span class="kicker">Qısa görüşlər</span>
+            <h1>Vlog</h1>
+        </div>
+
+        <div class="smart-filter reveal">
+            <label class="smart-filter__search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="cardSearch" placeholder="Vloqlarda axtar..." autocomplete="off" aria-label="Axtarış" />
+            </label>
+            <form method="get" class="smart-filter__form">
+                <select name="categoryId" class="form-select" onchange="this.form.submit()">
+                    <option value="">Bütün kateqoriyalar</option>
+                    @if (categories != null)
+                    {
+                        foreach (var c in categories)
+                        {
+                            <option value="@c.Id" selected="@(selected == c.Id)">@c.Name</option>
+                        }
+                    }
+                </select>
+            </form>
+            <span class="smart-filter__count" id="cardCount"></span>
+        </div>
+
+        <div class="row g-4">
+            @{ var idx = 0; }
+            @foreach (var v in Model)
+            {
+                <div class="col-12 col-sm-6 col-lg-4 reveal" data-card data-search="@($"{v.Title} {v.Category?.Name}")" style="transition-delay:@((idx % 3) * 90)ms">
+                    <a class="smart-card" asp-action="Details" asp-route-id="@v.Id">
+                        <div class="smart-card__media @(string.IsNullOrEmpty(v.CoverImageUrl) ? "smart-card__media--empty" : "")">
+                            @if (!string.IsNullOrEmpty(v.CoverImageUrl))
+                            {
+                                <img src="@v.CoverImageUrl" alt="@v.Title" loading="lazy" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-camera-video"></i>
+                            }
+                            <div class="smart-card__glass"></div>
+                            <span class="smart-card__play"><i class="bi bi-play-fill"></i></span>
+                            @if (v.Category != null)
+                            {
+                                <span class="smart-badge smart-badge--cat"><i class="bi bi-tag-fill"></i> @v.Category.Name</span>
+                            }
+                            <span class="smart-badge smart-badge--views"><i class="bi bi-eye-fill"></i> @v.ViewCount</span>
+                            <span class="smart-badge smart-badge--date"><i class="bi bi-calendar3"></i> @v.PublishDate.ToString("dd.MM.yyyy")</span>
+                        </div>
+                        <div class="smart-card__body">
+                            <h3 class="smart-card__title">@v.Title</h3>
+                            <span class="smart-card__more">İzlə <i class="bi bi-arrow-right"></i></span>
+                        </div>
+                    </a>
+                </div>
+                idx++;
+            }
+        </div>
+
+        <div class="smart-empty" id="cardEmpty"><i class="bi bi-search-heart"></i>Axtarışa uyğun nəticə tapılmadı.</div>
+
+        @if (!Model.Any())
+        {
+            <p class="text-muted mt-3">Vlog tapılmadı.</p>
+        }
+
+        @if (totalPages > 1)
+        {
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == page ? "active" : "")">
+                            <a class="page-link" href="?page=@i&categoryId=@selected">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </div>
+</section>

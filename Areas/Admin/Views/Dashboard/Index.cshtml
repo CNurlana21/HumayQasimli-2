@@ -1,0 +1,29 @@
+@model HumayQasimli.Models.ViewModels.AdminDashboardViewModel
+@{ ViewData["Title"] = "Dashboard"; }
+<h1 class="mb-4">Dashboard</h1>
+<div class="row g-3">
+    <div class="col-md-3 col-6">
+        <div class="card shadow-sm"><div class="card-body"><h6 class="text-muted">İstifadəçilər</h6><h3>@Model.TotalUsers</h3></div></div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card shadow-sm"><div class="card-body"><h6 class="text-muted">Vlog-lar</h6><h3>@Model.TotalVlogs <small class="text-muted fs-6">(@Model.PublishedVlogs yayımda)</small></h3></div></div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card shadow-sm"><div class="card-body"><h6 class="text-muted">Portfolio</h6><h3>@Model.TotalPortfolioProjects</h3></div></div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card shadow-sm"><div class="card-body"><h6 class="text-muted">Şərhlər</h6><h3>@Model.TotalComments</h3></div></div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card shadow-sm"><div class="card-body"><h6 class="text-muted">Like-lar</h6><h3>@Model.TotalLikes</h3></div></div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card shadow-sm border-danger"><div class="card-body"><h6 class="text-muted">Oxunmamış əlaqə mesajı</h6><h3>@Model.UnreadContactMessages</h3></div></div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card shadow-sm"><div class="card-body"><h6 class="text-muted">Sertifikatlar</h6><h3>@Model.TotalCertificates</h3></div></div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card shadow-sm"><div class="card-body"><h6 class="text-muted">Təlimlər</h6><h3>@Model.TotalTrainings</h3></div></div>
+    </div>
+</div>

@@ -1,0 +1,7 @@
+bin/
+obj/
+*.user
+.vs/
+wwwroot/uploads/*
+!wwwroot/uploads/.gitkeep
+appsettings.Local.json

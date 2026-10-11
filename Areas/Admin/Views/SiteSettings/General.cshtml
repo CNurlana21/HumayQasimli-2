@@ -1,0 +1,7 @@
+@model SiteSetting
+@{ ViewData["Title"] = "Sayt tənzimləmələri"; }
+<h1 class="mb-4">Sayt tənzimləmələri</h1>
+<form asp-action="General" method="post" class="col-md-6">
+    <div class="mb-3"><label class="form-label">Footer mətni</label><input asp-for="FooterText" class="form-control" /></div>
+    <button type="submit" class="btn btn-dark">Yadda saxla</button>
+</form>

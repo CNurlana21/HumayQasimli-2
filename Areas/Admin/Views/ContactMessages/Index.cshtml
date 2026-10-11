@@ -1,0 +1,25 @@
+@model HumayQasimli.Models.ViewModels.PagedResult<ContactMessage>
+@{ ViewData["Title"] = "Əlaqə mesajları"; }
+<h1 class="mb-3">Əlaqə mesajları</h1>
+<form method="get" class="mb-3 col-md-4"><input type="text" name="search" value="@Model.SearchTerm" class="form-control" placeholder="Axtar..." /></form>
+<table class="table table-bordered bg-white align-middle">
+    <thead><tr><th>Ad</th><th>Email</th><th>Mövzu</th><th>Oxunub</th><th>Tarix</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var m in Model.Items)
+    {
+        <tr class="@(m.IsRead ? "" : "fw-bold")">
+            <td>@m.Name</td><td>@m.Email</td><td>@m.Subject</td><td>@(m.IsRead ? "Bəli" : "Xeyr")</td><td>@m.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@m.Id" class="btn btn-sm btn-outline-secondary">Bax</a>
+                <form asp-action="Delete" asp-route-id="@m.Id" method="post" class="d-inline" onsubmit="return confirm('Silinsin?')"><button type="submit" class="btn btn-sm btn-outline-danger">Sil</button></form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+@if (Model.TotalPages > 1)
+{
+    <nav><ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++) { <li class="page-item @(i == Model.PageNumber ? "active" : "")"><a class="page-link" href="?page=@i&search=@Model.SearchTerm">@i</a></li> }
+    </ul></nav>
+}

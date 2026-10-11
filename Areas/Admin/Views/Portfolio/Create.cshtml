@@ -1,0 +1,15 @@
+@model PortfolioProject
+@{ ViewData["Title"] = "Yeni layihə"; }
+<h1 class="mb-4">Yeni layihə</h1>
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="col-md-8">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3"><label class="form-label">Başlıq</label><input asp-for="Title" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Açıqlama</label><textarea asp-for="Description" class="form-control" rows="4"></textarea></div>
+    <div class="mb-3"><label class="form-label">Kateqoriya</label><select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select"><option value="">-- Seçin --</option></select></div>
+    <div class="mb-3"><label class="form-label">Şəkil</label><input type="file" name="image" class="form-control" accept=".jpg,.jpeg,.png,.webp" /></div>
+    <div class="mb-3"><label class="form-label">Layihə linki</label><input asp-for="ProjectUrl" class="form-control" /></div>
+    
+    <div class="form-check mb-3"><input asp-for="IsFeatured" class="form-check-input" /><label class="form-check-label">Featured</label></div>
+    <button type="submit" class="btn btn-dark">Yadda saxla</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Ləğv et</a>
+</form>
