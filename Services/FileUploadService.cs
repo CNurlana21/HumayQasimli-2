@@ -1,12 +1,12 @@
-using HumayQasimli.Models.Entities;
-using Microsoft.AspNetCore.Http;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace HumayQasimli.Services
 {
     public class FileUploadService : IFileUploadService
     {
-        private readonly IWebHostEnvironment _env;
         private readonly IConfiguration _configuration;
+        private readonly Cloudinary _cloudinary;
 
         private static readonly string[] ImageExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
         private static readonly string[] DocumentExtensions = { ".pdf" };
@@ -30,10 +30,14 @@ namespace HumayQasimli.Services
             [".mov"] = 4
         };
 
-        public FileUploadService(IWebHostEnvironment env, IConfiguration configuration)
+        public FileUploadService(IConfiguration configuration)
         {
-            _env = env;
             _configuration = configuration;
+
+            var url = configuration["Cloudinary:Url"]
+                      ?? throw new InvalidOperationException("Cloudinary:Url teyin olunmayib.");
+            _cloudinary = new Cloudinary(url);
+            _cloudinary.Api.Secure = true;
         }
 
         private long MaxFileSizeBytes =>
@@ -71,31 +75,102 @@ namespace HumayQasimli.Services
                 return (false, null, "Fayl mezmunu uzantisi ile uygun gelmir.");
             }
 
-            var safeFileName = $"{Guid.NewGuid():N}{extension}";
-            var uploadsRoot = Path.Combine(_env.WebRootPath, "uploads", subFolder);
-            Directory.CreateDirectory(uploadsRoot);
+            var folder = $"humayqasimli/{subFolder}";
+            var publicId = Guid.NewGuid().ToString("N");
 
-            var fullPath = Path.Combine(uploadsRoot, safeFileName);
-
-            using (var stream = new FileStream(fullPath, FileMode.Create))
+            try
             {
-                await file.CopyToAsync(stream);
-            }
+                await using var stream = file.OpenReadStream();
+                UploadResult result;
 
-            var relativePath = $"/uploads/{subFolder}/{safeFileName}";
-            return (true, relativePath, null);
+                if (VideoExtensions.Contains(extension))
+                {
+                    result = await _cloudinary.UploadAsync(new VideoUploadParams
+                    {
+                        File = new FileDescription(publicId + extension, stream),
+                        Folder = folder,
+                        PublicId = publicId
+                    });
+                }
+                else if (DocumentExtensions.Contains(extension))
+                {
+                    result = await _cloudinary.UploadAsync(new RawUploadParams
+                    {
+                        File = new FileDescription(publicId + extension, stream),
+                        Folder = folder,
+                        PublicId = publicId + extension
+                    });
+                }
+                else
+                {
+                    result = await _cloudinary.UploadAsync(new ImageUploadParams
+                    {
+                        File = new FileDescription(publicId + extension, stream),
+                        Folder = folder,
+                        PublicId = publicId
+                    });
+                }
+
+                if (result.Error != null)
+                {
+                    return (false, null, "Yukleme xetasi: " + result.Error.Message);
+                }
+
+                return (true, result.SecureUrl.ToString(), null);
+            }
+            catch (Exception ex)
+            {
+                return (false, null, "Yukleme xetasi: " + ex.Message);
+            }
         }
 
         public void DeleteFile(string? relativePath)
         {
-            if (string.IsNullOrWhiteSpace(relativePath)) return;
-
-            var trimmed = relativePath.TrimStart('/');
-            var fullPath = Path.Combine(_env.WebRootPath, trimmed.Replace('/', Path.DirectorySeparatorChar));
-
-            if (File.Exists(fullPath))
+            // Kohne yerli fayllar (/uploads/...) ve bos deyerler ucun hec ne etmirik
+            if (string.IsNullOrWhiteSpace(relativePath) ||
+                !relativePath.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             {
-                try { File.Delete(fullPath); } catch { }
+                return;
+            }
+
+            try
+            {
+                // https://res.cloudinary.com/{cloud}/{image|video|raw}/upload/v123/folder/name.ext
+                var segments = new Uri(relativePath).AbsolutePath
+                    .Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+                var uploadIndex = Array.IndexOf(segments, "upload");
+                if (uploadIndex < 1) return;
+
+                var resourceTypeName = segments[uploadIndex - 1];
+                var rest = segments.Skip(uploadIndex + 1).ToList();
+
+                if (rest.Count > 0 && System.Text.RegularExpressions.Regex.IsMatch(rest[0], @"^v\d+$"))
+                {
+                    rest.RemoveAt(0);
+                }
+
+                var publicId = Uri.UnescapeDataString(string.Join("/", rest));
+
+                var resourceType = resourceTypeName switch
+                {
+                    "video" => ResourceType.Video,
+                    "raw" => ResourceType.Raw,
+                    _ => ResourceType.Image
+                };
+
+                // Sekil ve video ucun public id uzantisiz olur, raw (pdf) ucun uzantili
+                if (resourceType != ResourceType.Raw)
+                {
+                    var dot = publicId.LastIndexOf('.');
+                    if (dot > 0) publicId = publicId.Substring(0, dot);
+                }
+
+                _cloudinary.Destroy(new DeletionParams(publicId) { ResourceType = resourceType });
+            }
+            catch
+            {
+                // Silinmese de sayt islemeye davam etsin
             }
         }
 
