@@ -7,6 +7,7 @@
     <UserSecretsId>c1f4e4a2-6b7d-4a3e-9f0a-humayqasimli-2026</UserSecretsId>
     <RootNamespace>HumayQasimli</RootNamespace>
     <AssemblyName>HumayQasimli</AssemblyName>
+	  <MSBuildWarningsAsMessages>NU1901;NU1902;NU1903;NU1904</MSBuildWarningsAsMessages>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
   </ItemGroup>
 
   <ItemGroup>
