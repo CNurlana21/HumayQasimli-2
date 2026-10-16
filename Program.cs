@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 
 // ---------------------------------------------------------------------
@@ -71,16 +72,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 // ---------------------------------------------------------------------
 // Authentication (Cookie + Google external login)
 // ---------------------------------------------------------------------
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Account/Login";
-    options.LogoutPath = "/Account/Logout";
-    options.AccessDeniedPath = "/Account/AccessDenied";
-    options.ExpireTimeSpan = TimeSpan.FromDays(14);
-    options.SlidingExpiration = true;
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-});
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
@@ -128,11 +120,7 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 var app = builder.Build();
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
-}
+
 // ---------------------------------------------------------------------
 // Global exception handling
 // ---------------------------------------------------------------------
