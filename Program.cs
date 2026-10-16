@@ -124,7 +124,11 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 var app = builder.Build();
-
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 // ---------------------------------------------------------------------
 // Global exception handling
 // ---------------------------------------------------------------------
