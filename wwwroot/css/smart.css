@@ -2957,3 +2957,222 @@ html.lb-lock {
     object-fit: cover;
     object-position: center center;
 }
+
+/* =====================================================================
+   MENTOR RƏYLƏRİ: şəkilsiz, animasiyalı smart kartlar
+   ===================================================================== */
+.review-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    height: 100%;
+    padding: 2.2rem 1.6rem 1.5rem;
+    overflow: hidden;
+    border-radius: 22px;
+    color: var(--text);
+    background: linear-gradient(145deg, rgba(255, 255, 255, .10), rgba(255, 255, 255, .03));
+    border: 1px solid rgba(233, 213, 255, .2);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 16px 44px -18px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .12);
+    transition: transform .55s var(--sm-ease), box-shadow .55s var(--sm-ease), border-color .4s;
+    animation: rv-float 7s ease-in-out calc(var(--i, 0) * -1.4s) infinite;
+}
+
+    /* yuxarıda axan neon xətt */
+    .review-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #38BDF8, #C084FC, #F0ABFC, #E9D5FF, #38BDF8);
+        background-size: 300% 100%;
+        animation: rv-line 6s linear infinite;
+        box-shadow: 0 0 18px rgba(192, 132, 252, .8);
+    }
+
+    /* küncdə nəfəs alan işıq */
+    .review-card::after {
+        content: "";
+        position: absolute;
+        right: -60px;
+        bottom: -60px;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(56, 189, 248, .35), transparent 70%);
+        opacity: .5;
+        animation: rv-glow 5s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    .review-card:hover {
+        transform: translateY(-10px);
+        border-color: rgba(56, 189, 248, .5);
+        box-shadow: 0 30px 64px -18px rgba(192, 132, 252, .65), 0 0 42px -8px rgba(56, 189, 248, .45);
+    }
+
+.review-card__quote {
+    position: absolute;
+    top: .35rem;
+    right: 1rem;
+    font-size: 4.2rem;
+    line-height: 1;
+    background: linear-gradient(135deg, #38BDF8, #C084FC);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: .55;
+    animation: rv-quote 4.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.review-card > .readmore,
+.review-card__author {
+    position: relative;
+    z-index: 1;
+}
+
+.review-card__text {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre-line;
+}
+
+.review-card__author {
+    margin-top: auto;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    border-top: 1px dashed rgba(233, 213, 255, .25);
+}
+
+.review-card__name {
+    font-size: 1.12rem;
+    font-weight: 800;
+    letter-spacing: -.01em;
+    background: linear-gradient(110deg, #FFFFFF, #E9D5FF, #7DD3FC, #E9D5FF, #FFFFFF);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rv-name 6s ease-in-out infinite alternate;
+}
+
+.review-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45rem;
+}
+
+.review-card__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    max-width: 100%;
+    padding: .3rem .8rem;
+    border-radius: 9999px;
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--sm-lav);
+    background: rgba(192, 132, 252, .15);
+    border: 1px solid rgba(56, 189, 248, .3);
+    box-shadow: inset 0 0 12px rgba(192, 132, 252, .25);
+    transition: transform .4s var(--sm-ease);
+}
+
+    .review-card__tag i {
+        color: #7DD3FC;
+    }
+
+.review-card__tag--project {
+    background: rgba(56, 189, 248, .14);
+    border-color: rgba(244, 114, 182, .35);
+}
+
+    .review-card__tag--project i {
+        color: #F0ABFC;
+        transition: transform .5s var(--sm-ease);
+    }
+
+.review-card:hover .review-card__tag--project i {
+    transform: translate(3px, -3px) rotate(12deg);
+}
+
+.review-card:hover .review-card__tag {
+    transform: translateY(-2px);
+}
+
+@keyframes rv-float {
+    0%, 100% {
+        translate: 0 0;
+    }
+
+    50% {
+        translate: 0 -6px;
+    }
+}
+
+@keyframes rv-line {
+    to {
+        background-position: 300% 0;
+    }
+}
+
+@keyframes rv-glow {
+    0%, 100% {
+        opacity: .25;
+        transform: scale(.9);
+    }
+
+    50% {
+        opacity: .7;
+        transform: scale(1.15);
+    }
+}
+
+@keyframes rv-quote {
+    0%, 100% {
+        transform: rotate(-4deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(4deg) scale(1.08);
+    }
+}
+
+@keyframes rv-name {
+    from {
+        background-position: 0% 50%;
+    }
+
+    to {
+        background-position: 100% 50%;
+    }
+}
+
+@media (max-width: 480px) {
+    .review-card {
+        padding: 2rem 1.2rem 1.2rem;
+    }
+
+        .review-card:hover {
+            transform: none;
+        }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .review-card,
+    .review-card::before,
+    .review-card::after,
+    .review-card__quote,
+    .review-card__name {
+        animation: none !important;
+    }
+}

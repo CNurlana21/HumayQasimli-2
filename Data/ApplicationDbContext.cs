@@ -22,6 +22,8 @@ namespace HumayQasimli.Data
         
         public DbSet<Training> Trainings => Set<Training>();
         public DbSet<Certificate> Certificates => Set<Certificate>();
+
+        public DbSet<MentorReview> MentorReviews => Set<MentorReview>();
         public DbSet<PortfolioProject> PortfolioProjects => Set<PortfolioProject>();
         public DbSet<Media> MediaItems => Set<Media>();
         public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
@@ -145,7 +147,13 @@ namespace HumayQasimli.Data
                  .HasForeignKey(o => o.UserId)
                  .OnDelete(DeleteBehavior.Cascade);
             });
-
+            builder.Entity<MentorReview>(e =>
+            {
+                e.Property(r => r.AuthorName).HasMaxLength(200).IsRequired();
+                e.Property(r => r.AuthorTitle).HasMaxLength(200);
+                e.Property(r => r.ProjectName).HasMaxLength(250);
+                e.Property(r => r.Content).HasMaxLength(4000).IsRequired();
+            });
             builder.Entity<MentorMeeting>(e => e.Property(m => m.Title).HasMaxLength(250).IsRequired());
            
             builder.Entity<Training>(e => e.Property(t => t.Title).HasMaxLength(250).IsRequired());

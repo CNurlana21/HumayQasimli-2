@@ -1,0 +1,17 @@
+﻿@model MentorReview
+@{
+    ViewData["Title"] = "Rəyi redaktə et";
+}
+<h1 class="mb-4">Rəyi redaktə et</h1>
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3"><label class="form-label">Ad Soyad</label><input asp-for="AuthorName" class="form-control" /><span asp-validation-for="AuthorName" class="text-danger"></span></div>
+    <div class="mb-3"><label class="form-label">Status (məs. Tələbə, Menecer, Sahibkar)</label><input asp-for="AuthorTitle" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Qoşulduğu layihə</label><input asp-for="ProjectName" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Rəy mətni</label><textarea asp-for="Content" rows="6" class="form-control"></textarea><span asp-validation-for="Content" class="text-danger"></span></div>
+    <div class="mb-3"><label class="form-label">Sıra</label><input asp-for="DisplayOrder" type="number" class="form-control" /></div>
+    <div class="form-check mb-3"><input asp-for="IsActive" class="form-check-input" /><label class="form-check-label" asp-for="IsActive">Saytda göstərilsin</label></div>
+    <button type="submit" class="btn btn-dark">Yadda saxla</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Ləğv et</a>
+</form>

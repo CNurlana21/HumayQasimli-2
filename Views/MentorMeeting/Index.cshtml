@@ -1,6 +1,7 @@
 @model List<HumayQasimli.Models.Entities.MentorMeeting>
 @{
     ViewData["Title"] = "Mentorluq";
+    var reviews = ViewBag.Reviews as List<HumayQasimli.Models.Entities.MentorReview>;
 }
 
 <section class="section section--raised smart-section">
@@ -44,3 +45,48 @@
         }
     </div>
 </section>
+
+@if (reviews != null && reviews.Any())
+{
+    <section class="section section--mist smart-section smart-section--alt">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="kicker">Rəylər</span>
+                <h2>Mentor rəyləri</h2>
+                <p class="lead">Mentorluq prosesindən keçənlərin fikirləri.</p>
+            </div>
+
+            <div class="row g-4">
+                @{
+                    var ri = 0;
+                }
+                @foreach (var r in reviews)
+                {
+                    <div class="col-12 col-md-6 col-lg-4 reveal" style="transition-delay:@((ri % 3) * 90)ms">
+                        <article class="review-card" style="--i:@ri">
+                            <i class="bi bi-quote review-card__quote" aria-hidden="true"></i>
+                            <div class="readmore" data-readmore>
+                                <div class="readmore__text review-card__text" style="--rm-lines:6">@r.Content</div>
+                                <button type="button" class="readmore__btn" aria-expanded="false"><span>Ətraflı oxu</span> <i class="bi bi-chevron-down"></i></button>
+                            </div>
+                            <footer class="review-card__author">
+                                <strong class="review-card__name">@r.AuthorName</strong>
+                                <div class="review-card__tags">
+                                    @if (!string.IsNullOrWhiteSpace(r.AuthorTitle))
+                                    {
+                                        <span class="review-card__tag review-card__tag--status"><i class="bi bi-person-badge"></i> @r.AuthorTitle</span>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(r.ProjectName))
+                                    {
+                                        <span class="review-card__tag review-card__tag--project"><i class="bi bi-rocket-takeoff"></i> @r.ProjectName</span>
+                                    }
+                                </div>
+                            </footer>
+                        </article>
+                    </div>
+                    ri++;
+                }
+            </div>
+        </div>
+    </section>
+}

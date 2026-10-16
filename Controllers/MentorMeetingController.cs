@@ -17,6 +17,13 @@ namespace HumayQasimli.Controllers
                 .OrderBy(m => m.DisplayOrder)
                 .ToListAsync();
 
+            ViewBag.Reviews = await _db.MentorReviews
+                .AsNoTracking()
+                .Where(r => r.IsActive)
+                .OrderBy(r => r.DisplayOrder)
+                .ThenByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
             return View(meetings);
         }
     }
