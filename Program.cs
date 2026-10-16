@@ -143,38 +143,24 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// ---------------------------------------------------------------------
-// Database migration + seed data on startup
-// ---------------------------------------------------------------------
-using (var scope = app.Services.CreateScope())
-{
-    try
-    {
-        await DbSeeder.SeedAsync(scope.ServiceProvider);
-    }
-    catch (Exception ex)
-    {
-        var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
-        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
-    }
-}
+
+// ----------------------------------------------------------------------
+// Verilənlər bazasının miqrasiyası + ilkin məlumatların (seed) yüklənməsi
+// ----------------------------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate(); // Cədvəlləri avtomatik formalaşdırır
+        context.Database.Migrate(); // Cədvəlləri verilənlər bazasında avtomatik yaradır
+
+        DbSeeder.SeedAsync(services).Wait(); // İlkin məlumatları (seed) əlavə edir
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Baza migrasiya olunarkən xəta baş verdi.");
+        var logger = services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
+        logger.LogError(ex, "Verilənlər bazası miqrasiya olunarkən və ya ilkin məlumatlar əlavə edilərkən xəta baş verdi.");
     }
-}
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
 }
 app.Run();
