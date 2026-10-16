@@ -2,6 +2,7 @@ using HumayQasimli.Data;
 using HumayQasimli.Models.Entities;
 using HumayQasimli.Services;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,9 @@ if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("post
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
+builder.Services.AddDataProtection()
+    .PersistKeysToDbContext<ApplicationDbContext>()
+    .SetApplicationName("HumayQasimli");
 
 // ---------------------------------------------------------------------
 // Identity

@@ -1,10 +1,12 @@
 using HumayQasimli.Models.Entities;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace HumayQasimli.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IDataProtectionKeyContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -22,7 +24,7 @@ namespace HumayQasimli.Data
         
         public DbSet<Training> Trainings => Set<Training>();
         public DbSet<Certificate> Certificates => Set<Certificate>();
-
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
         public DbSet<MentorReview> MentorReviews => Set<MentorReview>();
         public DbSet<PortfolioProject> PortfolioProjects => Set<PortfolioProject>();
         public DbSet<Media> MediaItems => Set<Media>();
