@@ -162,7 +162,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-
+app.MapGet("/health", () => Results.Ok("OK"));
 // ----------------------------------------------------------------------
 // Verilənlər bazasının miqrasiyası + ilkin məlumatların (seed) yüklənməsi
 // ----------------------------------------------------------------------
