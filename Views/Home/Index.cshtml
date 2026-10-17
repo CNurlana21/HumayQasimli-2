@@ -26,7 +26,7 @@
         <div class="hero__grid">
             <div>
                 <span class="hero__greeting">Salam 👋, mən</span>
-                <span class="hero__eyebrow">Mentor &amp; Koç</span>
+                <span class="hero__eyebrow">Mentor </span>
                 <h1 class="hero__title">
                     <span class="line"><span>@line1</span></span>
                     @if (!string.IsNullOrWhiteSpace(line2))
@@ -36,8 +36,8 @@
                 </h1>
                 <p class="hero__sub">@(settings?.HeroSubtitle ?? "Mentorluq, koçluq və şəxsi inkişaf üzrə iş və insanlar arasında körpü qururam.")</p>
                 <div class="hero__actions">
-                    <a class="btn btn-brand" asp-controller="Portfolio" asp-action="Index">Portfolioma bax</a>
-                    <a class="btn btn-outline-light" asp-controller="Vlog" asp-action="Index">Vlog-lara bax</a>
+                    <a class="btn btn-brand" asp-controller="Blog" asp-action="Index">Blog-lara bax</a>
+                    <a class="btn btn-outline-light" asp-controller="About" asp-action="Index">Haqqımda</a>
                 </div>
             </div>
 
