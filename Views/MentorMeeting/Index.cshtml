@@ -46,7 +46,7 @@
     </div>
 </section>
 
-@if (reviews != null && reviews.Any())
+@* @if (reviews != null && reviews.Any())
 {
     <section class="section section--mist smart-section smart-section--alt">
         <div class="container">
@@ -82,6 +82,68 @@
                                     }
                                 </div>
                             </footer>
+                        </article>
+                    </div>
+                    ri++;
+                }
+            </div>
+        </div>
+    </section>
+}
+ *@
+
+
+
+@if (reviews != null && reviews.Any())
+{
+    <section class="section section--mist smart-section smart-section--alt">
+        <div class="container">
+            <div class="section-head reveal">
+                <span class="kicker">Rəylər</span>
+                <h2>Mentor rəyləri</h2>
+                <p class="lead">Mentorluq prosesindən keçənlərin fikirləri.</p>
+            </div>
+
+            <div class="row g-4">
+                @{
+                    var ri = 0;
+                }
+                @foreach (var r in reviews)
+                {
+                    <div class="col-12 col-md-6 col-lg-4 reveal" style="transition-delay:@((ri % 3) * 90)ms">
+                        <article class="review-card" style="--i:@ri">
+                            <header class="review-card__head">
+                                <span class="review-card__avatar" aria-hidden="true"><i class="bi bi-person-fill"></i></span>
+                                <h3 class="review-card__name">@r.AuthorName</h3>
+                            </header>
+
+                            @if (!string.IsNullOrWhiteSpace(r.AuthorTitle) || !string.IsNullOrWhiteSpace(r.ProjectName))
+                            {
+                                <ul class="review-card__info">
+                                    @if (!string.IsNullOrWhiteSpace(r.AuthorTitle))
+                                    {
+                                        <li>
+                                            <span class="review-card__ico" aria-hidden="true"><i class="bi bi-briefcase-fill"></i></span>
+                                            <span><small>Status</small><strong>@r.AuthorTitle</strong></span>
+                                        </li>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(r.ProjectName))
+                                    {
+                                        <li>
+                                            <span class="review-card__ico review-card__ico--alt" aria-hidden="true"><i class="bi bi-rocket-takeoff-fill"></i></span>
+                                            <span><small>Qoşulduğu layihə</small><strong>@r.ProjectName</strong></span>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+
+                            <div class="review-card__review">
+                                <div class="review-card__label"><i class="bi bi-chat-quote-fill" aria-hidden="true"></i> Rəy</div>
+                                <div class="readmore" data-readmore>
+                                    <div class="readmore__text review-card__text" style="--rm-lines:6">@r.Content</div>
+                                    <button type="button" class="readmore__btn" aria-expanded="false"><span>Ətraflı oxu</span> <i class="bi bi-chevron-down"></i></button>
+                                </div>
+                            </div>
                         </article>
                     </div>
                     ri++;
